@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.function.Supplier;
 
 import com.evergreen7112.everlib.subsystems.motors.Motor.MotorType;
+import com.evergreen7112.everlib.subsystems.sensors.DistanceSesnsor;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -19,10 +20,19 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class MotorSubsystem extends Subsystem{
     Motor[] motors;
-
+    Supplier<Boolean> limit;
+    
     MotorSubsystem(Motor... motors)
     {
         this.motors = motors;
+        limit = () -> true;
+    }
+
+    MotorSubsystem(DistanceSesnsor distanceSensor, double minDistance, double maxDistance, 
+        Motor... motors)
+    {
+        this.motors = motors;
+        limit = () -> distanceSensor.inRange(minDistance, maxDistance);
     }
 
     MotorSubsystem(MotorType motorsType, int... ports)
