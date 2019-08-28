@@ -5,8 +5,10 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.evergreen7112.everlib.subsystems.motors.limits;
+package com.evergreen7112.everlib.functionalinterfaces.limits;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import com.evergreen7112.everlib.subsystems.sensors.DistanceSesnsor;
@@ -17,7 +19,7 @@ import com.evergreen7112.everlib.subsystems.sensors.DistanceSesnsor;
 public class MinLimit implements Limit{
     Supplier<Boolean> inRange;
     
-    MinLimit(double minDistance, DistanceSesnsor... sensors)
+    public MinLimit(double minDistance, DistanceSesnsor... sensors)
     {
         inRange = () -> {
             for (DistanceSesnsor sensor : sensors) {
@@ -36,6 +38,29 @@ public class MinLimit implements Limit{
         inRange = () -> sensor.atLeast(minDistance);
     }
 
+    public MinLimit(Map<DistanceSesnsor, Double> limitMap)
+    {
+        inRange = () -> 
+        {
+            Iterator<Map.Entry<DistanceSesnsor, Double>> iterator = limitMap.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<DistanceSesnsor, Double> pair = 
+                    (Map.Entry<DistanceSesnsor, Double>)iterator.next();
+                if(pair.getKey().getDistance() < pair.getValue())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+    }
+
+    public MinLimit(double minDistance, Supplier<Double> speedSupplier)
+    {
+        inRange = () -> speedSupplier.get() < minDistance;
+    }
+    
     @Override
     public boolean inRange() {
         return inRange.get();

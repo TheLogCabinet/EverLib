@@ -1,3 +1,5 @@
+package com.evergreen7112.everlib.functionalinterfaces.limits;
+
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -5,11 +7,9 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.evergreen7112.everlib.subsystems.motors.limits;
-
 /**
  * Add your docs here.
  */
-interface Limit {
+public interface Limit {
     public boolean inRange();
 }
