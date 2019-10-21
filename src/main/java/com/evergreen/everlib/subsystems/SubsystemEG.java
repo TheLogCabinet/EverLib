@@ -1,5 +1,6 @@
 package com.evergreen.everlib.subsystems;
 
+import com.evergreen.everlib.Exceptions;
 import com.evergreen.everlib.shuffleboard.handlers.Switch;
 import com.evergreen.everlib.shuffleboard.handlers.SwitchHandler;
 import com.evergreen.everlib.subsystems.sensors.DistanceSensor;
@@ -10,7 +11,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 /**
  * The subsys
  */
-public abstract class SubsystemEG extends Subsystem {
+public abstract class SubsystemEG extends Subsystem implements Exceptions {
 
     protected Switch m_subsystemSwitch;
     private Command m_defaultCommand;
@@ -47,7 +48,13 @@ public abstract class SubsystemEG extends Subsystem {
         }
     }
 
-    public double getDistance() {
-        return m_distanceSensor.getDistance();
+    public double getDistance() throws SensorDoesNotExistException {
+        try {
+            return m_distanceSensor.getDistance();
+        } 
+
+        catch (NullPointerException e) {
+            throw new SensorDoesNotExistException(getName() + " does not have a distance sensor!");
+        }
     }
 }

@@ -78,6 +78,15 @@ public interface Exceptions {
             super(message, error);
         }
 
+    }
 
+    public class SensorDoesNotExistException extends NullPointerException
+    {
+        private static final long serialVersionUID = 1L;
+    
+        public SensorDoesNotExistException(String message)
+        {
+            super(message);
+        }
     }
 }

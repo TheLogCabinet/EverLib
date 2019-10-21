@@ -15,10 +15,8 @@
 package com.evergreen.everlib.oi.joysticks;
 import java.util.Arrays;
 
-import com.evergreen.everlib.utils.Adjuster;
 import com.evergreen.everlib.oi.OIExceptions;
-import com.evergreen.everlib.subsystems.motors.commands.MoveByController;
-import com.evergreen.everlib.subsystems.motors.subsystems.OneMotorSystem;
+import com.evergreen.everlib.utils.Adjuster;
 
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -36,8 +34,6 @@ public class JoystickEG extends Joystick {
 
     private boolean m_exponential = false;
     private boolean m_inverted = false;
-
-    private double m_modifier = 1;
 
     @SuppressWarnings("unchecked")
     private Adjuster<Double>[] m_adjusters = (Adjuster<Double>[]) new Adjuster[AXES_NUM]; 
@@ -57,14 +53,6 @@ public class JoystickEG extends Joystick {
         this.m_defaultAdjuster = adjuster;
         Arrays.fill(m_adjusters, m_defaultAdjuster);
     }
-    
-    public void setMovementByAxis(int axNum, OneMotorSystem subsystem)
-    {
-        subsystem.setDefaultCommand(new MoveByController(
-            String.format("{0} Default Command (move by joytsick's {1})", subsystem.getName(), axNum),
-             subsystem, 
-             () ->  getRawAxis(axNum)));
-    }
 
     public void setAxisAdjuster(Joystick.AxisType axis, Adjuster<Double> adjuster)
     {
@@ -79,8 +67,6 @@ public class JoystickEG extends Joystick {
         double value = super.getRawAxis(axis);
 
         value = m_adjusters[axis].adjust(value);
-        
-        value *= m_modifier;
         
         if (m_exponential) value *= Math.abs(value);
         if (m_inverted) value *= -1;
@@ -98,19 +84,15 @@ public class JoystickEG extends Joystick {
         m_defaultAdjuster = adjuster;
     }
 
-    public void setExponential(boolean value) {
-        m_exponential = value;
+    public void setExponential() {
+        m_exponential = true;
     }
 
-    public void setInvered(boolean value) {
-        m_inverted = value;
+    public void setInverted() {
+        m_inverted = true;
     }
 
-    public void setModifier(double modifier) {
-        m_modifier = modifier;
-    }
-
-    public void shutDown() {
+    public void kill() {
         m_defaultAdjuster = (v) -> 0.0;
     }
 }

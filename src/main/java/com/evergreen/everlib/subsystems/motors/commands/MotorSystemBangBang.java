@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.Command;
  *  using a <a href=https://whatis.techtarget.com/definition/bang-bang-control> bang-bang control 
  * algoritm</a>.
  */
-public class MoveMotorSystemToTarget extends CommandEG {
+public class MotorSystemBangBang extends CommandEG {
 
   /**The subsystem to be moved to target. */
   private MotorSubsystem m_subsystem;
@@ -32,10 +32,6 @@ public class MoveMotorSystemToTarget extends CommandEG {
   /**A counter fo debugging, to distinguish between variables of different objects of this command. */
   // private static int counter = 0;
 
-  /**A supplier for the percentage of power required to give to the subsysystem's motors in order to 
-   * get it to stay in place after it reached its target  */
-  private Supplier<Double> m_stallPower;
-
   private boolean verbose;
 
   /**
@@ -49,11 +45,10 @@ public class MoveMotorSystemToTarget extends CommandEG {
   * @param subsystemName - The name of the subsystem to be moved to target, to be used for this command's switch
   * @param targetName - The name of the target to move the subsystem to, to be used for this command's switch../
   */
-  public MoveMotorSystemToTarget(
+  public MotorSystemBangBang(
     MotorSubsystem subsystem,
     Supplier<Double> speedModifier, 
-    Supplier<Double> target, 
-    Supplier<Double> stallModifier,
+    Supplier<Double> target,
     String subsystemName,
     String targetName) {
 
@@ -62,7 +57,6 @@ public class MoveMotorSystemToTarget extends CommandEG {
         this.m_subsystem = subsystem;
         this.m_speed = speedModifier;
         this.m_target = target;
-        this.m_stallPower = stallModifier;
         verbose = false;
   }
 
@@ -73,16 +67,13 @@ public class MoveMotorSystemToTarget extends CommandEG {
   * @param distanceSupplier - Supplier of the distance of the subsystem from a certain point.
   * @param speed - The speed modifier of the subsystem as it moves to target.
   * @param target -Supplier of the target's ditance from the same point the distanceSupplier mesures from.
-  * @param stallPower - the supplier of the stall neccesiry to hold the subsystem in place of the target.
-  * If you do not wish to hold th subsystem after it moves, set it as 0.
   * @param subsystemName - The name of the subsystem to be moved to target, to be used for this command's switch
   * @param targetName - The name of the target to move the subsystem to, to be used for this command's switch../
   */
-  public MoveMotorSystemToTarget(
+  public MotorSystemBangBang(
   MotorSubsystem subsystem,
   Supplier<Double> speed, 
   Supplier<Double> target, 
-  Supplier<Double> stallPower,
   String targetName,
   boolean verbose) {
   
@@ -93,7 +84,6 @@ public class MoveMotorSystemToTarget extends CommandEG {
   m_subsystem = subsystem;
   m_speed = speed;
   m_target = target;
-  m_stallPower = stallPower;
 }
 
   /**When the comand starts: determine if the subsystem is above or below the target, 
@@ -161,12 +151,6 @@ public class MoveMotorSystemToTarget extends CommandEG {
       || !m_subsystem.canMove()
       //OR if thge subsystem's switch is turned off.
       || super.isFinished();
-  }
-
-  /**When the command ends: stall according to midifier */
-  @Override
-  protected void end() {
-    m_subsystem.move(m_stallPower.get());
   }
 
 }

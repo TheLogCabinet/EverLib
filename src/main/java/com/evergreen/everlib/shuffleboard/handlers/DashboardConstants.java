@@ -65,8 +65,8 @@ public class DashboardConstants {
     
     public static Supplier<Boolean> addBoolean(String name, boolean value)
     {
-
-        Preferences.getInstance().putBoolean(name, value);
+        if (!Preferences.getInstance().containsKey(name))
+            Preferences.getInstance().putBoolean(name, value);
 
         return () -> Preferences.getInstance().getBoolean(name, false);
     }

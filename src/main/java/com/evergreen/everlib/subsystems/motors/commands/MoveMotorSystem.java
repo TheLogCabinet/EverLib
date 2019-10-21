@@ -1,3 +1,8 @@
+package com.evergreen.everlib.subsystems.motors.commands;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -5,82 +10,82 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.evergreen.everlib.subsystems.motors.commands;
 
-import java.util.Map;
 import java.util.function.Supplier;
 
-import com.evergreen.everlib.CommandEG;
-import com.evergreen.everlib.utils.ranges.Range;
+import com.evergreen.everlib.shuffleboard.handlers.Switch;
 import com.evergreen.everlib.subsystems.motors.subsystems.MotorSubsystem;
+import com.evergreen.everlib.utils.ranges.Range;
 
-import edu.wpi.first.wpilibj.command.Command;
+/**
+ * Moves a {@link MotorSubsystem} according to iput speed and range.
+ */
+public class MoveMotorSystem extends SetMotorSystem {
 
-/**A {@link Command} which moves a {@link MotorSubsystem} according to a given speed map.*/
-public class MoveMotorSystem extends CommandEG {
-  /**The command's subsystem to be moved. */
-  MotorSubsystem subsystem;
-  /**The {@link Map} matching the index of the */
-  Map<Integer, Supplier<Double>> speedMap;
-  Range limit;
-  
   /**
-   * Constructs a {@link MoveMotorSystem MoveMotorSystem Command} according to input parameteres   
-   * @param name - The command's name - will correspond to its getName() method, and be the key
-   * to its shuffleboard switch.
+   * Constructs a {@link MoveMotorSystem Move1ControlSystem Command} according to input parameters.
+   * 
+   * @param name - The name of the command, corresponding to its {@link #getName()} method and to its
+   * {@link Switch shuffleboard switch}
    * @param subsystem - The subsystem to move.
-   * @param speedMap - A {@link Map} which links controllers (by index) to speed suppliers.
+   * @param speed - The speed supplier ywhich will supply the speed to move the subsystem.
+   * @param speedRange - The range in which to move the subsystem.
    */
-  public MoveMotorSystem(String name, MotorSubsystem subsystem, Map<Integer, Supplier<Double>> speedMap) {
-    super(name, subsystem);
-    this.subsystem = subsystem;
-    this.speedMap = speedMap;
-    this.limit = (v) -> true;
+  public MoveMotorSystem(String name, MotorSubsystem subsystem, Supplier<Double> speed, Range speedRange ) {
+    super(name, subsystem, speedRange,  getMap(speed, subsystem));
   }
 
   /**
-   * Constructs a {@link MoveMotorSystem MoveMotorSystem Command} according to input parameteres   
-   * @param name - The command's name - will correspond to its getName() method, and be the key
-   * to its shuffleboard switch.
+   * Constructs a {@link MoveMotorSystem Move1ControlSystem Command} according to input parameters.
+   * 
+   * @param name - The name of the command, corresponding to its {@link #getName()} method and to its
+   * {@link Switch shuffleboard switch}
    * @param subsystem - The subsystem to move.
-   * @param speedMap - A {@link Map} which links controllers (by index) to speed suppliers.
-   * @param limit - a {@link Range} which supplies the range in which to allow the subsystem to move.
+   * @param speed - The speed supplier ywhich will supply the speed to move the subsystem.
+   * @param speedModifier - the value modifier for the speed supplier fo this movement
+   * @param speedRange - The range in which to move the subsystem.
    */
-  public MoveMotorSystem(String name, MotorSubsystem subsystem, Range limit, Map<Integer, Supplier<Double>> speedMap) {
-    super(name, subsystem);
-    this.subsystem = subsystem;
-    this.speedMap = speedMap;
-    this.limit = limit;
+  public MoveMotorSystem(String name, MotorSubsystem subsystem, Supplier<Double> speed,
+    Supplier<Double> speedModifier, Range speedRange ) {
+    super(name, subsystem, speedRange, speedModifier, getMap(speed, subsystem));
   }
 
-/**As the command starts: stop the subsystem, making sure motors 
-   * that are not explicitly moved by the command won't move.  */
-  @Override
-  protected void initialize() {
-    subsystem.stop();
+  /**
+  * Constructs a {@link MoveMotorSystem Move1ControlSystem Command} according to input parameters.
+  * 
+  * @param name - The name of the command, corresponding to its {@link #getName()} method and to its
+  * {@link Switch shuffleboard switch}
+  * @param subsystem - The subsystem to move.
+  * @param speed - The speed supplier ywhich will supply the speed to move the subsystem.
+  */
+  public MoveMotorSystem(String name, MotorSubsystem subsystem, Supplier<Double> speed)
+  {
+    super(name, subsystem, getMap(speed, subsystem));
   }
 
-  /**Repeatedly as it runs: set the subsystem's motors according to the suppliers */
-  @Override
-  protected void execute() {
-    speedMap.forEach( (index, speed) -> subsystem.set(index, speed) );
+  /**
+  * Constructs a {@link MoveMotorSystem Move1ControlSystem Command} according to input parameters.
+  * 
+  * @param name - The name of the command, corresponding to its {@link #getName()} method and to its
+  * {@link Switch shuffleboard switch}
+  * @param subsystem - The subsystem to move.
+  * @param speed - The speed supplier ywhich will supply the speed to move the subsystem.
+  * @param speedModifier - the value modifier for the speed supplier fo this movement
+  */
+  public MoveMotorSystem(String name, MotorSubsystem subsystem, Supplier<Double> speed, 
+    Supplier<Double> speedModifier)
+  {
+    super(name, subsystem, speedModifier, getMap(speed, subsystem));
   }
 
-  /**Finish if the subsystem goes out of its permitted range, or if the command times out. */
-  @Override
-  protected boolean isFinished() {
-    return !limit.inRange(subsystem.getDistance()) || !subsystem.canMove() || isTimedOut();
-  }
+  private static Map<Integer, Supplier<Double>> getMap(Supplier<Double> sup, MotorSubsystem subsystem)
+  {
+    Map<Integer, Supplier<Double>> map = new HashMap<>();
 
-  /**As the command ends, stop the subsystem */
-  @Override
-  protected void end() {
-    subsystem.stop();
-  }
+    for (int i = 0; i < subsystem.getMotorControllers().length; i++) {
+      map.put(i, sup);
+    }
 
-  /**As the command ends, stop the subsystem */
-  @Override
-  protected void interrupted() {
-    end();
+    return map;
   }
 }

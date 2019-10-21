@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package com.evergreen.everlib.subsystems.motors.subsystems;
 
 import java.util.Map;
@@ -21,9 +14,12 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * A {@link Subsystem} consisting of one or more motor m_controllers.
  */
 public class MotorSubsystem extends SubsystemEG {
-    /**The subsystem's motor controlelr. */
+    /**The subsystem's motor controllers. */
     protected MotorController[] m_controllers;
     
+    /**Map mapping motorcontrollers to modifiers. */
+    protected Supplier<Double> m_speedModifier;
+
     /**The range in which the subsystem is allowed to move. */
     protected Range m_Range;
 
@@ -46,7 +42,7 @@ public class MotorSubsystem extends SubsystemEG {
         m_distanceSensor = distanceSensor;
     }
 
-    MotorSubsystem(String name, DistanceSensor sensor, Range Range, MotorController... motors)
+    public MotorSubsystem(String name, DistanceSensor sensor, Range Range, MotorController... motors)
     {
         super(name);
         m_controllers = motors;
@@ -54,7 +50,7 @@ public class MotorSubsystem extends SubsystemEG {
         m_Range = Range;
     }
 
-    MotorSubsystem(String name, DistanceSensor distanceSensor, Range Range, 
+    public MotorSubsystem(String name, DistanceSensor distanceSensor, Range Range, 
         Command defaultCommand, MotorController... motors)
     {
         super(name);
@@ -74,13 +70,7 @@ public class MotorSubsystem extends SubsystemEG {
     public void set(int index, double speed)
     {
         if(canMove()) 
-            m_controllers[index].set(speed);
-    }
-
-    public void set(int index, Supplier<Double> speed)
-    {
-        if(canMove())        
-            m_controllers[index].set(speed);
+            m_controllers[index].set(speed * m_speedModifier.get());
     }
 
     public void set(Map<Integer, Double> speedMap)
@@ -98,6 +88,19 @@ public class MotorSubsystem extends SubsystemEG {
 
     }
 
+
+    public MotorController[] getMotorControllers() {
+        return m_controllers;
+    }
+
+    public void setSpeedModifier(double modifier) {
+        m_speedModifier = () -> modifier;
+    }
+
+    public void setSpeedModifier(Supplier<Double> modifier) {
+        m_speedModifier = modifier;
+    }
+ 
     public boolean canMove() {
         return m_Range.inRange(getDistance()) && m_subsystemSwitch.get();
     }

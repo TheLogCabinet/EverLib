@@ -3,6 +3,8 @@ package com.evergreen.everlib;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.evergreen.everlib.betamimic.ParallelCommandGroup;
+import com.evergreen.everlib.betamimic.SequentialCommandGroup;
 import com.evergreen.everlib.shuffleboard.handlers.Switch;
 import com.evergreen.everlib.shuffleboard.handlers.SwitchHandler;
 import com.evergreen.everlib.subsystems.SubsystemEG;
@@ -56,6 +58,7 @@ public abstract class CommandEG extends Command {
             super.start();
     }
 
+
     /**
      * Disables the command and prevents it from starting.
      */
@@ -77,9 +80,8 @@ public abstract class CommandEG extends Command {
         SwitchHandler.toggle(m_commandSwitch);
     }
 
-    /**
-     * 
-     * @return the subsystem's switch.
+    /** 
+     * @return the command's switch.
      */
     public Switch getSwitch() {
         return m_commandSwitch;
@@ -106,4 +108,12 @@ public abstract class CommandEG extends Command {
     }
 
 
+    //----------BETA MIMIC----------
+    public ParallelCommandGroup alongWith(Command command) {
+        return new ParallelCommandGroup(this, command);
+    }
+
+    public SequentialCommandGroup andThen(Command command ) {
+        return new SequentialCommandGroup(this, command);
+    }
 }

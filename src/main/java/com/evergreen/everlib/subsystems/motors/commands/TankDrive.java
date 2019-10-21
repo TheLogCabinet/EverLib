@@ -9,10 +9,11 @@ import com.evergreen.everlib.utils.ranges.Range;
 /**
  * TankDrive
  */
-public class TankDrive extends MoveMotorSystem {
+
+public class TankDrive extends SetMotorSystem {
       
   /**
-   * Constructs a {@link MoveMotorSystem MoveMotorSystem Command} according to input parameteres   
+   * Constructs a {@link SetMotorSystem MoveMotorSystem Command} according to input parameteres   
    * @param name - The command's name - will correspond to its getName() method, and be the key
    * to its shuffleboard switch.
    * @param subsystem - The subsystem to move.
@@ -21,6 +22,21 @@ public class TankDrive extends MoveMotorSystem {
   public TankDrive(String name, DriveTank subsystem, Supplier<Double> leftSpeed, 
     Supplier<Double> rightSpeed) {
     super(name, subsystem, Map.of(0, leftSpeed, 1, rightSpeed));
+  }
+  
+
+  /**
+   * Constructs a {@link TanKDrive TanKDrive Command} according to input parameteres   
+   * @param name - The command's name - will correspond to its getName() method, and be the key
+   * to its shuffleboard switch.
+   * @param subsystem - The subsystem to move.
+   * @param leftSpeed - the speed supplier for the power to give to the left motors of the drive tank.
+   * @param rightSpeed - the speed supplier for the power to give to the right motors of the drive tank.
+   * @param speedModifier - the modifier for the speed suppliers for this movement.
+   */
+  public TankDrive(String name, DriveTank subsystem, Supplier<Double> leftSpeed, 
+    Supplier<Double> rightSpeed, Supplier<Double> speedModifier) {
+    super(name, subsystem, speedModifier, Map.of(0, leftSpeed, 1, rightSpeed));
   }
 
   /**
@@ -34,5 +50,21 @@ public class TankDrive extends MoveMotorSystem {
   public TankDrive(String name, DriveTank subsystem, Range limit, 
     Supplier<Double> leftSpeed, Supplier<Double> rightSpeed) {
     super(name, subsystem, limit, Map.of(0, leftSpeed, 1, rightSpeed));
+  }
+
+  /**
+   * 
+   * Constructs a {@link TanKDrive TanKDrive Command} according to input parameteres   
+   * @param name - The command's name - will correspond to its getName() method, and be the key
+   * to its shuffleboard switch.
+   * @param subsystem - The subsystem to move.
+   * @param limit - The movement's desired limit.
+   * @param leftSpeed - the speed supplier for the power to give to the left motors of the drive tank.
+   * @param rightSpeed - the speed supplier for the power to give to the right motors of the drive tank.
+   * @param speedModifier - the modifier for the speed suppliers for this movement.
+   */
+  public TankDrive(String name, DriveTank subsystem, Range limit, 
+    Supplier<Double> leftSpeed, Supplier<Double> rightSpeed, Supplier<Double> speedModifier) { 
+    super(name, subsystem, limit, speedModifier, Map.of(0, leftSpeed, 1, rightSpeed));
   }
 }
