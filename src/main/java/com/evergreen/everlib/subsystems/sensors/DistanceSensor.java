@@ -7,28 +7,20 @@
 
 package com.evergreen.everlib.subsystems.sensors;
 
+import com.evergreen.everlib.subsystems.SubsystemEG;
 import com.evergreen.everlib.utils.ranges.Range;
 
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Encoder;
-
 /**
- * A sensor which mesures distance ({@link AnalogInput}, {@link Encoder}, ect.) 
+ * Add your docs here.
  */
 public abstract class DistanceSensor {
     
-    /**The range of values it makes sense for the sensor to produce.
-     * for example, a laser sensor on an elevator should only produce 
-     * mesurements between its highest possible point and its lowest.
-     */
     private Range m_absoluteLimits;
-
-    /**
-     * 
-     */
     private double m_offset;
-    
-    boolean m_killSwitch;
+    private String m_subsystemName;
+
+    private boolean m_killSwitch;
+
 
     public DistanceSensor() {
         this( (v) -> true, 0);
@@ -74,6 +66,17 @@ public abstract class DistanceSensor {
     public boolean atMost(double maxDistance)
     {
         return getDistance() < maxDistance;
-    }    
-}
+    }
 
+    public void setSubsystem(SubsystemEG subsystem) {
+        m_subsystemName = subsystem.getName();
+    }
+
+    public String getSubsystem() {
+        return m_subsystemName;
+    }
+
+    public boolean killed() {
+        return m_killSwitch;
+    }
+}

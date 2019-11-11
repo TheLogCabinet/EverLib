@@ -37,7 +37,7 @@ public class Switch implements Supplier<Boolean> {
     }
 
     /**Returns  */
-    protected String getKey()
+    public String getKey()
     {
         return name;
     }
