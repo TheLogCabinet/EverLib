@@ -7,9 +7,9 @@
 
 package com.evergreen.everlib.oi.joysticks;
 
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import com.evergreen.everlib.utils.Adjuster;
+import com.wpilib2020.framework.button.Button;
+import com.wpilib2020.framework.button.JoystickButton;
 
 
 /**
@@ -20,20 +20,6 @@ import com.evergreen.everlib.utils.Adjuster;
  * {@link Adjuster} which will automatically adjust its getRawAxis values.
  */
 public class F310GamePad extends JoystickEG {
-    
-    
-    public final Button X = new JoystickButton(this, 1);
-    public final Button A = new JoystickButton(this, 2);
-    public final Button B = new JoystickButton(this, 3);
-    public final Button Y = new JoystickButton(this, 4);
-    public final Button LB = new JoystickButton(this, 5);
-    public final Button RB = new JoystickButton(this, 6);
-    public final Button LT = new JoystickButton(this, 7);
-    public final Button RT = new JoystickButton(this, 8);
-    public final Button BACK = new JoystickButton(this, 9);
-    public final Button START = new JoystickButton(this, 10);
-    public final Button leftJoystick = new JoystickButton(this, 11);
-    public final Button rightJoystick = new JoystickButton(this, 12);
     
     /**Constructs and returns a new F310 Gamepad joystick, connected to input port.
      * @param port - the port the gamepad is connected to.
@@ -52,6 +38,31 @@ public class F310GamePad extends JoystickEG {
     public F310GamePad(int port, Adjuster<Double> adjuster)
     {
         super(port, adjuster);
+    }
+
+    public enum F310 {
+        X(1),
+        A(2),
+        B(3),
+        Y(4),
+        LB(5),
+        RB(6),
+        LT(7),
+        RT(8),
+        BACK(9),
+        START(10),
+        JOYSTICK_LEFT(11),
+        JOYSTICK_RIGHT(12);
+        
+        int m_buttonPort;
+
+        private F310(int buttonPort) {
+            m_buttonPort = buttonPort;
+        }
+    }
+
+    public Button get(F310 button) {
+        return new JoystickButton(this, button.m_buttonPort);
     }
 
 }
