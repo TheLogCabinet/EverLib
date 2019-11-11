@@ -20,19 +20,36 @@ import com.evergreen.everlib.utils.Adjuster;
 
 import edu.wpi.first.wpilibj.Joystick;
 
+
 /**
- * The base class for joystick in the Evergreen Framework.
+ * The base class for {@link Joystick}s in the Evergreen Framework.
  * 
- * A Joystick class to extend the WPILib joystick  and add it more automatic adjusting capabilities.
- * The class contains an {@link Adjuster adjuster} for each of the axes, which can be set using its
- * {@link #setAxisAdjuster(int, Adjuster)} method, as well  
+ * Most importantly, it provides easy methods to ivert and expontiate the joytsick axis,
+ * and allowes {@link #getRawAxis(AxisType) getRawAxis} by {@link AxisType}, for clearer code.
+ * 
+ * For more advance adjustments,this class contains an {@link Adjuster adjuster} for each of the axes, 
+ * which can be set using its {@link #setAxisAdjuster(int, Adjuster)} method.
  */
 public class JoystickEG extends Joystick {
-    
+
+
+    /**number of axes on the joystick */
     private static final int AXES_NUM = 5;
+
+    /**An adjuster which makes no change. 
+     * Since the code requires an adjuster, ff not specified - 
+     * this will be the adjuster for all axesx.*/
     private static final Adjuster<Double> USELESS_ADJUSTER = (val) -> val;
 
+    /**
+     * Whether the joystick is exponential - the position-to-value function ({@link Joystick#getRawAxis(int)} 
+     * is exponential or linear.
+     */
     private boolean m_exponential = false;
+    
+    /**
+     * Whether the joystick is inverted = should we multiply its values by -1?
+     */
     private boolean m_inverted = false;
 
     @SuppressWarnings("unchecked")
