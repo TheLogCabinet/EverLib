@@ -1,14 +1,14 @@
 package com.evergreen.everlib.subsystems.motors.subsystems;
 
+import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import com.evergreen.everlib.subsystems.SubsystemEG;
 import com.evergreen.everlib.subsystems.sensors.DistanceSensor;
+import com.evergreen.everlib.utils.loggables.LoggableData;
+import com.evergreen.everlib.utils.loggables.LoggableDouble;
 import com.evergreen.everlib.utils.ranges.Range;
-
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Subsystem;
+import com.wpilib2020.framework.Command;
 
 /**
  * A {@link Subsystem} consisting of one or more motor m_controllers.
@@ -16,18 +16,12 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class MotorSubsystem extends SubsystemEG {
     /**The subsystem's motor controllers. */
     protected MotorController[] m_controllers;
-    
-    /**Map mapping motorcontrollers to modifiers. */
-    protected Supplier<Double> m_speedModifier;
 
     /**The range in which the subsystem is allowed to move. */
     protected Range m_Range;
 
     /**The sensor mesuring the distance the subsystem has gone. */
     protected DistanceSensor m_distanceSensor;
-
-    /**The subsystem's default command */
-    protected Command m_defaultCommand;
     
     public MotorSubsystem(String name, MotorController... motors)
     {
@@ -53,11 +47,10 @@ public class MotorSubsystem extends SubsystemEG {
     public MotorSubsystem(String name, DistanceSensor distanceSensor, Range Range, 
         Command defaultCommand, MotorController... motors)
     {
-        super(name);
+        super(name, defaultCommand);
         m_controllers = motors;
         m_distanceSensor = distanceSensor;
         m_Range = Range;
-        m_defaultCommand = defaultCommand;
     }
 
 
@@ -70,7 +63,7 @@ public class MotorSubsystem extends SubsystemEG {
     public void set(int index, double speed)
     {
         if(canMove()) 
-            m_controllers[index].set(speed * m_speedModifier.get());
+            m_controllers[index].set(speed);
     }
 
     public void set(Map<Integer, Double> speedMap)
@@ -88,28 +81,30 @@ public class MotorSubsystem extends SubsystemEG {
 
     }
 
+    public DistanceSensor getSensor() {
+        return m_distanceSensor;
+    }
 
     public MotorController[] getMotorControllers() {
         return m_controllers;
     }
 
-    public void setSpeedModifier(double modifier) {
-        m_speedModifier = () -> modifier;
-    }
-
-    public void setSpeedModifier(Supplier<Double> modifier) {
-        m_speedModifier = modifier;
-    }
- 
     public boolean canMove() {
         return m_Range.inRange(getDistance()) && m_subsystemSwitch.get();
     }
 
     @Override
-    protected void initDefaultCommand() {   
-        if(m_defaultCommand != null)
-        {
-            setDefaultCommand(m_defaultCommand);
+    public List<LoggableData> getLoggableData() {
+        List<LoggableData> loggables = super.getLoggableData();
+
+
+        for (int i = 0; i < m_controllers.length; i++) {
+            loggables.add(new LoggableDouble(
+                getName() + " - Controller #" + i + " speed", m_controllers[i]::get));            
         }
+
+        return super.getLoggableData();
     }
+
+    
 }

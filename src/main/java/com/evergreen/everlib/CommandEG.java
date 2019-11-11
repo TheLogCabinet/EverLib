@@ -1,15 +1,18 @@
 package com.evergreen.everlib;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import com.evergreen.everlib.betamimic.ParallelCommandGroup;
-import com.evergreen.everlib.betamimic.SequentialCommandGroup;
+import com.evergreen.everlib.shuffleboard.handlers.DashboardStreams;
 import com.evergreen.everlib.shuffleboard.handlers.Switch;
 import com.evergreen.everlib.shuffleboard.handlers.SwitchHandler;
 import com.evergreen.everlib.subsystems.SubsystemEG;
+import com.evergreen.everlib.utils.loggables.LoggableData;
+import com.evergreen.everlib.utils.loggables.LoggableInt;
+import com.evergreen.everlib.utils.loggables.LoggableObject;
+import com.wpilib2020.framework.CommandBase;
+import com.wpilib2020.framework.Subsystem;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 /**
  * The basic command for the Eververgreen Framework.
@@ -18,18 +21,33 @@ import edu.wpi.first.wpilibj.command.Command;
  * 
  * @author Atai Ambus
  */
-public abstract class CommandEG extends Command {
+public abstract class CommandEG extends CommandBase implements LoggableObject {
     private Switch m_commandSwitch;
-    private Set<SubsystemEG> m_requirments = new HashSet<>();
 
+    private int m_ranCounter = 0;
+    
     /**
-     * Constructs a new {@link CommandEG} with input name
+     * Constructs a new {@link CommandEG} with input name, and without logging it in the shuffleboard
      * @param name - The subsystem's name, corresponding to is {@link #getName()} method
      * as well as its {@link Switch Shuffleboard Switch}.
      */
     public CommandEG(String name) {
-        super(name);
+        setName(name);
         m_commandSwitch = SwitchHandler.addSwitch(name);
+    }
+
+    /**
+     * Constructs a new {@link CommandEG} with input name, logging it on the shuffleboard if specified.
+     * 
+     * @param name - The subsystem's name, corresponding to is {@link #getName()} method
+     * as well as its {@link Switch Shuffleboard Switch}.
+     * 
+     * @param log - wether to log the command on the shuffleboard or not.
+     */
+    public CommandEG(String name, boolean log) {
+        setName(name);
+        m_commandSwitch = SwitchHandler.addSwitch(name + " - Command Switch");
+        if (log) DashboardStreams.addLoggable(this);
     }
 
     
@@ -42,20 +60,45 @@ public abstract class CommandEG extends Command {
      * @param subsystems - Any subsystems the command requires.
      */
     public CommandEG(String name, SubsystemEG... subsystems) {
-        super(name);
+        this(name);
         
         for (SubsystemEG subsystem : subsystems) {
-            requires(subsystem);
+            addRequirements((Subsystem)subsystem);
         }
 
         m_commandSwitch = SwitchHandler.addSwitch(name);
     }
 
+    /**
+     * Constructs a new {@link CommandEG} with input name.
+     * 
+     * @param name - The subsystem's name, corresponding to is {@link #getName()} method
+     * as well as its {@link Switch Shuffleboard Switch}.
+     * 
+     * @param subsystems - Any subsystems the command requires.
+     * 
+     * @param log - wether to log the command on the shuffleboard or not.
+     * 
+     */
+    public CommandEG(String name, boolean log, SubsystemEG... subsystems) {
+        this(name);
+        
+        for (SubsystemEG subsystem : subsystems) {
+            addRequirements((Subsystem)subsystem);
+        }
+
+        m_commandSwitch = SwitchHandler.addSwitch(name);
+
+        if (log) DashboardStreams.addLoggable(this);
+    }
+
+    /**Schedules this command, defaulting to interruptible, as long both this an*/
     @Override
-    public synchronized void start() {
-    
+    public void schedule() {
+        m_ranCounter++;
+
         if (canStart())
-            super.start();
+            super.schedule();
     }
 
 
@@ -88,32 +131,31 @@ public abstract class CommandEG extends Command {
     }
 
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         return !m_commandSwitch.get();
     }
 
 
     private boolean canStart() {
         
-        for (SubsystemEG subsystem : m_requirments) {
-            if (!subsystem.getSwitchState()) return false;
+        for (Subsystem subsystem : getRequirements()) {
+            if (subsystem instanceof SubsystemEG) {
+                SubsystemEG sub = (SubsystemEG)subsystem;
+                if (!sub.getSwitchState())
+                    return false;
+            }
         }
 
         return m_commandSwitch.get();
     }
 
-    protected synchronized void requires(SubsystemEG subsystem) {
-        super.requires(subsystem);
-        m_requirments.add(subsystem);
+    @Override
+    public List<LoggableData> getLoggableData() {
+        return List.of(new LoggableData[] {
+            new LoggableInt(getName() + "Ran Counter", () -> m_ranCounter)
+        });
     }
 
-
-    //----------BETA MIMIC----------
-    public ParallelCommandGroup alongWith(Command command) {
-        return new ParallelCommandGroup(this, command);
-    }
-
-    public SequentialCommandGroup andThen(Command command ) {
-        return new SequentialCommandGroup(this, command);
-    }
+    @Override
+    public void initSendable(SendableBuilder builder) { }
 }

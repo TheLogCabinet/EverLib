@@ -1,6 +1,11 @@
 package com.evergreen.everlib.subsystems.pistons.subsystems;
 
+import java.util.List;
+
 import com.evergreen.everlib.subsystems.SubsystemEG;
+import com.evergreen.everlib.utils.loggables.LoggableData;
+import com.evergreen.everlib.utils.loggables.LoggableString;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
@@ -72,9 +77,11 @@ public class PistonSubsystem extends SubsystemEG {
         }
     }
 
-    public void initDefaultCommand()
-    {
-    
+    @Override
+    public List<LoggableData> getLoggableData() {
+        return List.of(new LoggableData[]
+        {
+            new LoggableString(getName() + " - State", () -> m_piston.get().toString())
+        });
     }
-
 }
