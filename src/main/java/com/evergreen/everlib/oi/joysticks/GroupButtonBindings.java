@@ -7,8 +7,10 @@
 
 package com.evergreen.everlib.oi.joysticks;
 
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.command.Command;
+
+import com.wpilib2020.framework.Command;
+import com.wpilib2020.framework.button.Button;
+
 
 /**
  * This class consists of the whileHeld, whileReleased annd whenPressed methods, like the ones
@@ -25,7 +27,7 @@ public class GroupButtonBindings {
      * @param command - The command to be run while the buttons are held.
      * @param buttons - The buttons to wo hold to run the command.
      */
-    public static void whileHeld(Command command, Button... buttons)
+    public static void whileHeld(Command command, Button...buttons)
     {
         for (Button button : buttons) {
             button.whileHeld(command);

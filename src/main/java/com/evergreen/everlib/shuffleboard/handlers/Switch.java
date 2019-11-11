@@ -25,8 +25,7 @@ public class Switch implements Supplier<Boolean> {
      * @param name - the name for the switch. This will be the String returned when accessing
      * the name member.
      * @param getter - the Supplier itself. This is the method that will be ran in get().*/
-    protected Switch(String name, Supplier<Boolean> getter)
-    {
+    protected Switch(String name, Supplier<Boolean> getter) {
         this.name = name;
         this.getter = getter;
     }
@@ -37,8 +36,7 @@ public class Switch implements Supplier<Boolean> {
     }
 
     /**Returns  */
-    public String getKey()
-    {
+    public String getKey() {
         return name;
     }
 }

@@ -7,8 +7,9 @@
 
 package com.evergreen.everlib.shuffleboard.handlers;
 
-import edu.wpi.first.wpilibj.Preferences;
 import com.evergreen.everlib.Exceptions;
+
+import edu.wpi.first.wpilibj.Preferences;
 
 /**
  * Add your docs here.

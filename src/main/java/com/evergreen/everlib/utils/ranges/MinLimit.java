@@ -14,13 +14,11 @@ public class MinLimit implements Range {
     Supplier<Double> m_minDistance;
     Supplier<Double> m_tolerance;
 
-    public MinLimit(double minDistance)
-    {
+    public MinLimit(double minDistance) {
         m_minDistance = () -> minDistance;
     }
 
-    public MinLimit(Supplier<Double> minDistance)
-    {
+    public MinLimit(Supplier<Double> minDistance) {
         m_minDistance = minDistance;
     }
 
@@ -29,15 +27,13 @@ public class MinLimit implements Range {
         m_tolerance = tolerance;
     }
 
-    public MinLimit(double minDistance, double tolerance) 
-    {
+    public MinLimit(double minDistance, double tolerance) {
         m_minDistance = () -> minDistance;
         m_tolerance = () -> tolerance;
     }
     
     @Override
     public boolean inRange(double distance) {
-
         return distance > m_minDistance.get() - m_tolerance.get();
     }
 }
