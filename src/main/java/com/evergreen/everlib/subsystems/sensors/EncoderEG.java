@@ -83,6 +83,71 @@ public class EncoderEG extends DistanceSensor {
     }
 
     /**
+     * Constructs an {@link EncoderEG} object according to input sources, encoder offset and 
+     * limits.
+     * @param wrappedEncoder - the encoder sensor to wrap
+     * 
+     * @param absoluteLimit - The absolute limits that it should  be able to mesure. for example, an
+     * elevator's height.
+     * @param offset - The offset from the point of mesurement. For example, its height on an elevator.
+     */
+    //All other constructors call this one, fillinng the gaps with default values.
+    public EncoderEG(Encoder wrappedEncoder, Range absoluteLimit, double offset) {
+        super(absoluteLimit, offset);
+        m_encoder = wrappedEncoder;
+    }
+
+
+    /**
+     * Constructs an {@link EncoderEG} object according to input sources, encoder offset and 
+     * limits.
+     * @param wrappedEncoder - the encoder sensor to wrap
+     * 
+     * @param absoluteLimit - The absolute limits that it should  be able to mesure. for example, an
+     * elevator's height.
+     * @param offset - The offset from the point of mesurement. For example, its height on an elevator.
+     * @param distancePerPulse - the distance the subsystem passes with each encoder tick.
+     */
+    public EncoderEG(Encoder wrappedEncoder, Range absoluteLimit, double offset, double distancePerPulse) {
+        this(wrappedEncoder, absoluteLimit, offset);
+        m_encoder.setDistancePerPulse(distancePerPulse);
+    }
+
+    
+    /**
+     * Constructs an {@link EncoderEG} object according to input sources.
+     * limits.
+     * @param wrappedEncoder - the encoder sensor to wrap
+     * 
+     */
+    public EncoderEG(Encoder wrappedEncoder) {  
+        this(wrappedEncoder, (v) -> true, 0);
+    }
+
+
+    /**
+     * Constructs an {@link EncoderEG} object according to input sources and encoder offset.
+     * @param wrappedEncoder - the encoder sensor to wrap
+     * 
+     * @param offset - The offset from the point of mesurement. For example, its height on ann elevator.
+     */
+    public EncoderEG(Encoder wrappedEncoder, double offset) {
+        this(wrappedEncoder, (v) -> true, offset);        
+    }
+
+
+    /**
+     * Constructs an {@link EncoderEG} object according to input sources and limits.
+     * @param wrappedEncoder - the encoder sensor to wrap
+     * 
+     * @param absoluteLimit - The absolute limits that it should  be able to mesure. for example, an
+     * elevator's height.
+     */
+    public EncoderEG(Encoder wrappedEncoder, Range absoluteLimit) {
+        this(wrappedEncoder, absoluteLimit, 0);
+    }
+
+    /**
      * Sets the distance per pulse according to an input value. 
      * @param value - the value to set.
      */
