@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.evergreen.everlib.subsystems.sensors.EncoderEG;
 
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Spark;
@@ -40,9 +39,6 @@ public class MotorController implements SpeedController {
       */
     private ArrayList<SpeedController> m_motors = new ArrayList<>();
 
-    /**The list of encoders embodies in the motors.*/
-    private ArrayList<EncoderEG> m_encoders = new ArrayList<>();
-
     /**
      * Constructs a new {@link MotorController} which controlls one of more motors with the same 
      * type of electronic controller.
@@ -56,7 +52,7 @@ public class MotorController implements SpeedController {
         
         SpeedController firstMotor;
         SpeedController[] motors;
-        SpeedController currentController;
+        SpeedController finalController;
         
         //Check fot the type, then create the aproptiate SpeedControllers and initalize the
         //Wrapped object as their SpeedControllerGroup.
@@ -64,15 +60,13 @@ public class MotorController implements SpeedController {
         //The speed controllers to construct the Group with.
         motors = new SpeedController[ports.length];
         firstMotor = type.m_init.generate(ports[0]);
-
-        if (type == ControllerType.SPARK)
         
         //intializing them.
         for(int i = 1; i < ports.length; i++)
         {
-            currentController = type.initlize(ports[i]);
-            m_motors.add(currentController);
-            motors[i-1] = currentController;
+            finalController = type.initlize(ports[i]);
+            m_motors.add(finalController);
+            motors[i-1] = finalController; 
         }   
 
         //Initializing the wrapped object.
@@ -93,18 +87,13 @@ public class MotorController implements SpeedController {
 
         //An array list of all speed controllers created, which will be used to initialize 
         //The wrapped SpeedControlelrGroup object.
-        ArrayList<SpeedController> motors = new ArrayList<>();
-    
-
+        ArrayList<SpeedController> motors = new ArrayList<>();   
+        
         //Foreach of the motors, add its controller to the controller list.
         for(MotorController controller : controllers)
         {
             //For each of the moto
-            controller.m_motors.forEach((control) -> 
-            {
-                motors.add(control); 
-                m_encoders.addAll(motors.getEncoders());
-            });
+            controller.m_motors.forEach((control) -> motors.add(control));
         }
 
         //Extract the first element, convert the list to array, and use the resulting objects
@@ -152,7 +141,6 @@ public class MotorController implements SpeedController {
     @Override
     public void stopMotor() {
         m_obj.stopMotor();
-        
     }
 
     /**A controller model - Victor SPX, Talon SRX, ect. */
@@ -160,7 +148,8 @@ public class MotorController implements SpeedController {
     {
         VICTOR_SPX(WPI_VictorSPX::new),
         TALON_SRX(WPI_TalonSRX::new),
-        SPARKMAX(Spark::new);
+        JAGUAR(Jaguar::new),
+        SPARK(Spark::new);
 
         MotorInitializer m_init;
 
