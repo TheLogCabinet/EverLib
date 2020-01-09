@@ -2,15 +2,19 @@ package com.evergreen.everlib.subsystems.motors.subsystems;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.Jaguar;
-import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+
+
 
 /**
  * This is a wrapper class for {@link SpeedController}, which allowes easier and more generic
@@ -19,6 +23,7 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
  * @author Atai Ambus
  */
 public class MotorController implements SpeedController {
+
     /**
      * MotorInitialize
      */
@@ -38,6 +43,10 @@ public class MotorController implements SpeedController {
      * from other MotorController objects.
       */
     private ArrayList<SpeedController> m_motors = new ArrayList<>();
+
+
+    private List<CANEncoder> m_encoders = new ArrayList<>();
+
 
     /**
      * Constructs a new {@link MotorController} which controlls one of more motors with the same 
@@ -65,13 +74,30 @@ public class MotorController implements SpeedController {
         for(int i = 1; i < ports.length; i++)
         {
             finalController = type.initlize(ports[i]);
+            if (type == ControllerType.SPARKMAX_BRUSHED || type == ControllerType.SPARKMAX_BRUSHLESS)
+                m_encoders.add( ((CANSparkMax)finalController).getEncoder() );
             m_motors.add(finalController);
             motors[i-1] = finalController; 
         }   
 
         //Initializing the wrapped object.
         m_obj = new SpeedControllerGroup(firstMotor, motors);
-            
+    }
+
+
+    /**
+     * @return A list of all CAN encoders this motor uses.
+     */
+    public List<CANEncoder> getCANEncoders() {
+        return m_encoders;
+    }
+
+    /**
+     * Returns the encoder of the first SparkMax this controller uses. 
+     * Usefull if there is only one.
+     */
+    public CANEncoder getCANEncoder() {
+        return m_encoders.get(0);
     }
 
     /**
@@ -92,8 +118,8 @@ public class MotorController implements SpeedController {
         //Foreach of the motors, add its controller to the controller list.
         for(MotorController controller : controllers)
         {
-            //For each of the moto
             controller.m_motors.forEach((control) -> motors.add(control));
+            m_encoders.addAll(controller.getCANEncoders());
         }
 
         //Extract the first element, convert the list to array, and use the resulting objects
@@ -102,11 +128,6 @@ public class MotorController implements SpeedController {
         motors.remove(0);
         SpeedController[] args = (SpeedController[])motors.toArray();
         m_obj = new SpeedControllerGroup(firstMotor, args);
-    }
-
-    @Override
-    public void pidWrite(double output) {
-        m_obj.pidWrite(output);
     }
 
     @Override
@@ -148,8 +169,8 @@ public class MotorController implements SpeedController {
     {
         VICTOR_SPX(WPI_VictorSPX::new),
         TALON_SRX(WPI_TalonSRX::new),
-        JAGUAR(Jaguar::new),
-        SPARK(Spark::new);
+        SPARKMAX_BRUSHED( (port) -> new CANSparkMax(port, MotorType.kBrushed)),
+        SPARKMAX_BRUSHLESS( (port) -> new CANSparkMax(port, MotorType.kBrushless));
 
         MotorInitializer m_init;
 
@@ -160,5 +181,11 @@ public class MotorController implements SpeedController {
         ControllerType(MotorInitializer init) {
             m_init = init;
         }
+    }
+
+    @Deprecated
+    @Override
+    public void pidWrite(double output) {
+        m_obj.pidWrite(output);
     }
 }
