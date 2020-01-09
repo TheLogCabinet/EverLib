@@ -17,6 +17,38 @@ public class EncoderEG extends DistanceSensor {
      */
     private Encoder m_encoder;
 
+
+    /**
+     * Constructs an {@link EncoderEG} object according to input sources, encoder offset and 
+     * limits.
+     *      
+     * @param encoder - The encoder to wrap.
+     * @param absoluteLimit - The absolute limits that it should  be able to mesure. for example, an
+     * elevator's height.
+     * @param offset - The offset from the point of mesurement. For example, its height on an elevator.
+     * @param distancePerPulse - the distance the subsystem passes with each encoder tick.
+     */
+    public EncoderEG(Encoder encoder, Range absoluteLimit, double offset, double distancePerPulse) {
+        this(encoder, absoluteLimit, offset);
+        m_encoder.setDistancePerPulse(distancePerPulse);
+    }
+
+    /**
+     * Constructs an {@link EncoderEG} object according to input sources, encoder offset and 
+     * limits.
+     * @param encoder - The encoder to wrap.
+     * @param absoluteLimit - The absolute limits that it should  be able to mesure. for example, an
+     * elevator's height.
+     * @param offset - The offset from the point of mesurement. For example, its height on an elevator.
+     */
+    //All other constructors call this one, fillinng the gaps with default values.
+    public EncoderEG(Encoder encoder, Range absoluteLimit, double offset) {
+        super(absoluteLimit, offset);
+        m_encoder = encoder;
+    }
+    
+
+
     /**
      * Constructs an {@link EncoderEG} object according to input sources, encoder offset and 
      * limits.
@@ -28,8 +60,7 @@ public class EncoderEG extends DistanceSensor {
      */
     //All other constructors call this one, fillinng the gaps with default values.
     public EncoderEG(int portA, int portB, Range absoluteLimit, double offset) {
-        super(absoluteLimit, offset);
-        m_encoder = new Encoder(portA, portB);
+        this(new Encoder(portA, portB), absoluteLimit, offset);
     }
 
 
@@ -44,8 +75,7 @@ public class EncoderEG extends DistanceSensor {
      * @param distancePerPulse - the distance the subsystem passes with each encoder tick.
      */
     public EncoderEG(int portA, int portB, Range absoluteLimit, double offset, double distancePerPulse) {
-        this(portA, portB, absoluteLimit, offset);
-        m_encoder.setDistancePerPulse(distancePerPulse);
+        this(new Encoder(portA, portB), absoluteLimit, offset, distancePerPulse);
     }
 
     
