@@ -5,10 +5,10 @@ import java.util.Map;
 
 import com.evergreen.everlib.subsystems.SubsystemEG;
 import com.evergreen.everlib.subsystems.sensors.DistanceSensor;
-import com.evergreen.everlib.utils.loggables.LoggableData;
-import com.evergreen.everlib.utils.loggables.LoggableDouble;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
 import com.evergreen.everlib.utils.ranges.Range;
-import com.wpilib2020.framework.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 
 /**
  * A {@link Subsystem} consisting of one or more motor m_controllers.
@@ -36,12 +36,12 @@ public class MotorSubsystem extends SubsystemEG {
         m_distanceSensor = distanceSensor;
     }
 
-    public MotorSubsystem(String name, DistanceSensor sensor, Range Range, MotorController... motors)
+    public MotorSubsystem(String name, DistanceSensor sensor, Range range, MotorController... motors)
     {
         super(name);
         m_controllers = motors;
         m_distanceSensor = sensor;
-        m_Range = Range;
+        m_Range = range;
     }
 
     public MotorSubsystem(String name, DistanceSensor distanceSensor, Range Range, 
@@ -96,7 +96,6 @@ public class MotorSubsystem extends SubsystemEG {
     @Override
     public List<LoggableData> getLoggableData() {
         List<LoggableData> loggables = super.getLoggableData();
-
 
         for (int i = 0; i < m_controllers.length; i++) {
             loggables.add(new LoggableDouble(
