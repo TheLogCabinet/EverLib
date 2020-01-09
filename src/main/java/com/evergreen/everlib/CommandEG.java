@@ -2,15 +2,14 @@ package com.evergreen.everlib;
 
 import java.util.List;
 
-import com.evergreen.everlib.shuffleboard.handlers.DashboardStreams;
-import com.evergreen.everlib.shuffleboard.handlers.Switch;
-import com.evergreen.everlib.shuffleboard.handlers.SwitchHandler;
+import com.evergreen.everlib.shuffleboard.constants.ConstantBoolean;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableInt;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableObject;
 import com.evergreen.everlib.subsystems.SubsystemEG;
-import com.evergreen.everlib.utils.loggables.LoggableData;
-import com.evergreen.everlib.utils.loggables.LoggableInt;
-import com.evergreen.everlib.utils.loggables.LoggableObject;
-import com.wpilib2020.framework.CommandBase;
-import com.wpilib2020.framework.Subsystem;
+
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
@@ -22,32 +21,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
  * @author Atai Ambus
  */
 public abstract class CommandEG extends CommandBase implements LoggableObject {
-    private Switch m_commandSwitch;
+    private ConstantBoolean m_commandSwitch;
 
     private int m_ranCounter = 0;
     
     /**
      * Constructs a new {@link CommandEG} with input name, and without logging it in the shuffleboard
      * @param name - The subsystem's name, corresponding to is {@link #getName()} method
-     * as well as its {@link Switch Shuffleboard Switch}.
+     * as well as its {@link ConstantBoolean Shuffleboard Switch}.
      */
     public CommandEG(String name) {
         setName(name);
-        m_commandSwitch = SwitchHandler.addSwitch(name);
-    }
-
-    /**
-     * Constructs a new {@link CommandEG} with input name, logging it on the shuffleboard if specified.
-     * 
-     * @param name - The subsystem's name, corresponding to is {@link #getName()} method
-     * as well as its {@link Switch Shuffleboard Switch}.
-     * 
-     * @param log - wether to log the command on the shuffleboard or not.
-     */
-    public CommandEG(String name, boolean log) {
-        setName(name);
-        m_commandSwitch = SwitchHandler.addSwitch(name + " - Command Switch");
-        if (log) DashboardStreams.addLoggable(this);
+        m_commandSwitch = new ConstantBoolean(name + "/switch");
     }
 
     
@@ -55,7 +40,7 @@ public abstract class CommandEG extends CommandBase implements LoggableObject {
      * Constructs a new {@link CommandEG} with input name.
      * 
      * @param name - The subsystem's name, corresponding to is {@link #getName()} method
-     * as well as its {@link Switch Shuffleboard Switch}.
+     * as well as its {@link ConstantBoolean Shuffleboard Switch}.
      * 
      * @param subsystems - Any subsystems the command requires.
      */
@@ -66,30 +51,7 @@ public abstract class CommandEG extends CommandBase implements LoggableObject {
             addRequirements((Subsystem)subsystem);
         }
 
-        m_commandSwitch = SwitchHandler.addSwitch(name);
-    }
-
-    /**
-     * Constructs a new {@link CommandEG} with input name.
-     * 
-     * @param name - The subsystem's name, corresponding to is {@link #getName()} method
-     * as well as its {@link Switch Shuffleboard Switch}.
-     * 
-     * @param subsystems - Any subsystems the command requires.
-     * 
-     * @param log - wether to log the command on the shuffleboard or not.
-     * 
-     */
-    public CommandEG(String name, boolean log, SubsystemEG... subsystems) {
-        this(name);
-        
-        for (SubsystemEG subsystem : subsystems) {
-            addRequirements((Subsystem)subsystem);
-        }
-
-        m_commandSwitch = SwitchHandler.addSwitch(name);
-
-        if (log) DashboardStreams.addLoggable(this);
+        m_commandSwitch = new ConstantBoolean(subsystems[0].getName() + "/command switches/" + name);
     }
 
     /**Schedules this command, defaulting to interruptible, as long both this an*/
@@ -106,27 +68,27 @@ public abstract class CommandEG extends CommandBase implements LoggableObject {
      * Disables the command and prevents it from starting.
      */
     public void disable() {
-        SwitchHandler.disable(m_commandSwitch);
+        m_commandSwitch.disable();
     }
 
     /**
      * Enables the command, allowing it to start.
      */
     public void enable() {
-        SwitchHandler.enable(m_commandSwitch);
+        m_commandSwitch.enable();
     }
 
     /**
      * Toggles the command - if it is enabled disable it, and vice versa.
      */
     public void toggle() {
-        SwitchHandler.toggle(m_commandSwitch);
+        m_commandSwitch.toggle();
     }
 
     /** 
      * @return the command's switch.
      */
-    public Switch getSwitch() {
+    public ConstantBoolean getSwitch() {
         return m_commandSwitch;
     }
 
@@ -152,7 +114,7 @@ public abstract class CommandEG extends CommandBase implements LoggableObject {
     @Override
     public List<LoggableData> getLoggableData() {
         return List.of(new LoggableData[] {
-            new LoggableInt(getName() + "Ran Counter", () -> m_ranCounter)
+            new LoggableInt(getName() + "/Ran Counter", () -> m_ranCounter)
         });
     }
 

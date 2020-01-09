@@ -1,11 +1,11 @@
 package com.evergreen.everlib.utils;
 
-import java.util.function.Supplier;
-
-import com.evergreen.everlib.shuffleboard.handlers.DashboardConstants;
+import com.evergreen.everlib.shuffleboard.constants.ConstantDouble;
+import com.evergreen.everlib.shuffleboard.constants.DashboardConstants;
 import com.evergreen.everlib.subsystems.SubsystemEG;
 import com.evergreen.everlib.subsystems.motors.subsystems.MotorSubsystem;
-import com.wpilib2020.deps.PIDController;
+
+import edu.wpi.first.wpilibj.controller.PIDController;
 
 /**
  * A utillity class to easily keep constant parameters, and to avoid cluttering constructors.
@@ -13,17 +13,17 @@ import com.wpilib2020.deps.PIDController;
 public class PIDSettings {
 
     /**Proportional constant supplier*/
-    private final Supplier<Double> m_P;
+    private final ConstantDouble m_P;
     /**Integral Constant supplier*/
-    private final Supplier<Double> m_I;
+    private final ConstantDouble m_I;
     /**Derivative constant supplier */
-    private final Supplier<Double> m_D;
+    private final ConstantDouble m_D;
     /**Feedforward constant supplier*/
-    private final Supplier<Double> m_F;
+    private final ConstantDouble m_F;
     /**Tolernace supplier */
-    private final Supplier<Double> m_tolerance;
+    private final ConstantDouble m_tolerance;
 
-    private final Supplier<Double> m_period;
+    private final ConstantDouble m_period;
     /**The controller to write the information into.*/
     private final MotorSubsystem m_subsystem;
 
@@ -49,16 +49,18 @@ public class PIDSettings {
     public PIDSettings(MotorSubsystem subsystem, double kP, double kI, double kD, 
         double tolerance, double kF, double period) {
 
-        m_P = DashboardConstants.addDouble(subsystem.getName() + " PID - kP (Value Supplier)", kP);
-        m_I = DashboardConstants.addDouble(subsystem.getName() + " PID - kI (Value Supplier)", kI);
-        m_D = DashboardConstants.addDouble(subsystem.getName() + " PID - kD (Value Supplier)", kD);
-        m_F = DashboardConstants.addDouble(subsystem.getName() + " PID - kF (Value Supplier)", kF);
+        DashboardConstants.getInstance().cd("/" + subsystem.getName() + "/PID");
+
+        m_P = new ConstantDouble("kP", kP);
+        m_I = new ConstantDouble("kI", kI);
+        m_D = new ConstantDouble("kD", kD);
+        m_F = new ConstantDouble("kF", kF);
         
-        m_tolerance = DashboardConstants.addDouble(
-            subsystem.getName() + " PID - Tolerance", tolerance);
+        m_tolerance = new ConstantDouble(
+            subsystem.getName() + "Tolerance", tolerance);
         
-        m_period = DashboardConstants.addDouble(
-            subsystem.getName() + " PID - Period", period);   
+        m_period = new ConstantDouble(
+            subsystem.getName() + "Period", period);   
 
         m_controller = new PIDController(kP, kI, kD, period);
         m_controller.setTolerance(tolerance);

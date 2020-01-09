@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.evergreen.everlib.Exceptions;
-import com.evergreen.everlib.shuffleboard.handlers.Switch;
-import com.evergreen.everlib.shuffleboard.handlers.SwitchHandler;
+import com.evergreen.everlib.shuffleboard.constants.ConstantBoolean;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableObject;
 import com.evergreen.everlib.subsystems.sensors.DistanceSensor;
 import com.evergreen.everlib.subsystems.sensors.DistanceSensorGroup;
-import com.evergreen.everlib.utils.loggables.LoggableData;
-import com.evergreen.everlib.utils.loggables.LoggableDouble;
-import com.evergreen.everlib.utils.loggables.LoggableObject;
-import com.wpilib2020.framework.Command;
-import com.wpilib2020.framework.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 /**
@@ -20,12 +19,12 @@ import com.wpilib2020.framework.SubsystemBase;
  */
 public abstract class SubsystemEG extends SubsystemBase implements Exceptions, LoggableObject {
 
-    protected Switch m_subsystemSwitch;
+    protected ConstantBoolean m_subsystemSwitch;
     private DistanceSensor m_distanceSensor;
 
     public SubsystemEG(String name) {
         setName(name);
-        m_subsystemSwitch  = SwitchHandler.addSwitch(name);
+        m_subsystemSwitch  = new ConstantBoolean(name);
     }
 
     public SubsystemEG(String name, Command defaultCommand) {
@@ -39,7 +38,7 @@ public abstract class SubsystemEG extends SubsystemBase implements Exceptions, L
         m_distanceSensor.setSubsystem(this);
     }
 
-    public Switch getSwitch() {
+    public ConstantBoolean getSwitch() {
         return m_subsystemSwitch;
     }
 
@@ -67,7 +66,7 @@ public abstract class SubsystemEG extends SubsystemBase implements Exceptions, L
             loggables.addAll(sensorGroup.getLoggableData());
         }
 
-        loggables.add(new LoggableDouble(getName() + " - distance", () -> getDistance()));
+        loggables.add(new LoggableDouble(getName() + "/distance", () -> getDistance()));
 
         return loggables;
     }
