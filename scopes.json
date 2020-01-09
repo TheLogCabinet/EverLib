@@ -1,0 +1,27 @@
+{
+    "oi":
+    {
+        "JS": "joysticks"
+    },
+
+    "board":
+    {
+        "consts": "Shuffleboard Constants",
+        "logs": "Shuffleboard Streams"
+    },
+
+    "struct": "Robot Code Structure classes",
+
+    "systs":
+    {
+        "motors": "Motor Subsystems",
+        "pistons": "Piston Subsystems",
+        "sensors": "Sensor Classes"
+    },
+
+    "utils":
+    {
+        "ranges": "Range Classes"
+    }
+
+}
