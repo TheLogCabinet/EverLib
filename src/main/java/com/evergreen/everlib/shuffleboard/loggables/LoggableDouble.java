@@ -1,8 +1,8 @@
-package com.evergreen.everlib.utils.loggables;
+package com.evergreen.everlib.shuffleboard.loggables;
 
 import java.util.function.Supplier;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import com.wpilib2020.deps.SmartDashboard;
 
 /**
  * LoggableNumber
@@ -21,5 +21,14 @@ public class LoggableDouble extends LoggableData {
         SmartDashboard.putNumber(getKey(), m_stream.get());
     }
 
+    @Override
+    public String getType() {
+        return "Double";
+    }
+
+    @Override
+    public String getValue() {
+        return m_stream.get().toString();
+    }
 
 }
