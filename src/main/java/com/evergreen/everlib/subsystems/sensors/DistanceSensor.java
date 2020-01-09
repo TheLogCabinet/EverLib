@@ -49,6 +49,8 @@ public abstract class DistanceSensor {
             m_killSwitch = true;
         }
 
+        if (m_killSwitch) return 0;
+
         return distance;
 
     }    
