@@ -8,8 +8,8 @@
 package com.evergreen.everlib.oi.joysticks;
 
 import com.evergreen.everlib.utils.Adjuster;
-import com.wpilib2020.framework.button.Button;
-import com.wpilib2020.framework.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 
 /**
@@ -18,28 +18,34 @@ import com.wpilib2020.framework.button.JoystickButton;
  * initilize or keep track of individual buttons. <p><p>
  * Noth that this class inherits {@link JoystickEG}, so it can be constructed with an
  * {@link Adjuster} which will automatically adjust its getRawAxis values.
+ * 
+ * @author Atai Ambus
  */
 public class F310GamePad extends JoystickEG {
     
-    /**Constructs and returns a new F310 Gamepad joystick, connected to input port.
-     * @param port - the port the gamepad is connected to.
+    /**Constructs an {@link F310GamePad} at input port
+     * 
+     * @param port - the joystick's port, as tuned in the DriverStation
      */
-    public F310GamePad(int port)
+    public F310GamePad(String name, int port)
     {
-        super(port);
+        super(name, port);
     }
 
     /**
-     * Constructs and returns a new F310 Gamepad joystick, connected to input port, and adjusts its
-     * axis' values according to the input adjuster.
-     * @param port - the port the gamepad is connected to.
-     * @param adjuster - the function that should adjust the joysticks' values.
+     * Constructs an {@link ExtremeProJoystick} object at given port,
+     * its values adjusted by input {@link Adjuster}
+     * 
+     * @param port - The joystick port, as tuned in the DriverStation
+     * @param adjuster - The function to adjust Joystick output.
      */
-    public F310GamePad(int port, Adjuster<Double> adjuster)
+    public F310GamePad(String name, int port, Adjuster<Double> adjuster)
     {
-        super(port, adjuster);
+        super(name, port, adjuster);
     }
 
+    
+    /**A list of the {@link F310GamePad}'s buttons*/
     public enum F310 {
         X(1),
         A(2),
@@ -54,14 +60,26 @@ public class F310GamePad extends JoystickEG {
         JOYSTICK_LEFT(11),
         JOYSTICK_RIGHT(12);
         
+        /**The button's port on the joystick */
         int m_buttonPort;
 
         private F310(int buttonPort) {
             m_buttonPort = buttonPort;
         }
+
+        public int getPort() {
+            return m_buttonPort;
+        }
     }
 
-    public Button get(F310 button) {
+
+    /**
+     * Gets a button from an {@link F310GamePad}.
+     * @param button - the button's value in the {@link F310} enum.
+     * @return A {@link Button} object of this joystcik, 
+     * matching the input value.
+     */
+    public Button getButton(F310 button) {
         return new JoystickButton(this, button.m_buttonPort);
     }
 
