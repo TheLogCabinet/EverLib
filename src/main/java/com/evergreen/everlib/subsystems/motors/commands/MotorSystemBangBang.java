@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import com.evergreen.everlib.subsystems.motors.subsystems.MotorSubsystem;
-import com.evergreen.everlib.utils.loggables.LoggableBoolean;
-import com.evergreen.everlib.utils.loggables.LoggableData;
-import com.evergreen.everlib.utils.loggables.LoggableDouble;
-import edu.wpi.first.wpilibj.command.Command;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableBoolean;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
 
 
 
@@ -28,29 +27,6 @@ public class MotorSystemBangBang extends MoveMotorSystem {
 
   private final Supplier<Boolean> IN_FRONT_SUPPLIER = () -> m_subsystem.getDistance() > m_target.get();
 
-
-  /**
-  * The constructor for this class, which sets its speed and target. 
-  * @param subsystem - The subsystem to be moved to target.
-  * @param motorSpeed - The speed modifier of the subsystem as it moves forward to target. If the movemennt
-  * will be backwards, this modifier will be inverted.
-  * @param target -Supplier of the target's ditance from the same point the distanceSupplier mesures from.
-  * @param targetName - The name of the target to move the subsystem to, to be used for this command's switch../
-  */
-  public MotorSystemBangBang(
-    MotorSubsystem subsystem,
-    Supplier<Double> motorSpeed, 
-    Supplier<Double> target,
-    String targetName,
-    boolean log) {
-        super(subsystem.getName() + " - Move to " + targetName, subsystem, motorSpeed);
-        
-        m_target = target;
-        m_startedInFront = IN_FRONT_SUPPLIER.get();
-
-        if (m_startedInFront) m_speedModifier = () -> -1.0; //If the subsystem should move backwards, invert the speed
-  }
-
   /**
   * The constructor for this class, which sets its speed and target. 
   * @param subsystem - The subsystem to be moved to target.
@@ -64,7 +40,13 @@ public class MotorSystemBangBang extends MoveMotorSystem {
     Supplier<Double> motorSpeed, 
     Supplier<Double> target,
     String targetName) {
-      this(subsystem, motorSpeed, target, targetName, false);
+      
+      super(subsystem.getName() + " - Move to " + targetName, subsystem, motorSpeed);
+      
+      m_target = target;
+      m_startedInFront = IN_FRONT_SUPPLIER.get();
+
+      if (m_startedInFront) m_speedModifier = () -> -1.0; //If the subsystem should move backwards, invert the speed
   }
  
   /**If the subsystem passed the target, finish*/

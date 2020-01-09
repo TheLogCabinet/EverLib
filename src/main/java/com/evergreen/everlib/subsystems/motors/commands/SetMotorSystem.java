@@ -16,13 +16,11 @@ import com.evergreen.everlib.CommandEG;
 import com.evergreen.everlib.subsystems.SubsystemEG;
 import com.evergreen.everlib.subsystems.motors.subsystems.MotorController;
 import com.evergreen.everlib.subsystems.motors.subsystems.MotorSubsystem;
-import com.evergreen.everlib.utils.loggables.LoggableBoolean;
-import com.evergreen.everlib.utils.loggables.LoggableData;
-import com.evergreen.everlib.utils.loggables.LoggableDouble;
-import com.evergreen.everlib.utils.loggables.LoggableString;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableBoolean;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableString;
 import com.evergreen.everlib.utils.ranges.Range;
-
-import edu.wpi.first.wpilibj.command.Command;
 
 /**A {@link Command} which moves a {@link MotorSubsystem} according to a given speed map.
  * 
@@ -44,37 +42,6 @@ public class SetMotorSystem extends CommandEG {
   
   private static final Range DEFAULT_RANGE = (v) -> true;
   private static final Supplier<Double> DEFAULT_MODIFIER = () -> 1.0;
-  private static final boolean DEFAULT_LOG = false;
-
-  /**
-   * Constructs a new {@link SetMotorSystem} with ranged movement accoeding to input parameters 
-   * 
-   * @param name - The command's name (corresponding to its {@link #getName()} method, shuffleboard switch
-   * and Loggable values.
-   * 
-   * @param subsystem - The subsystem to move.
-   * 
-   * @param limit - The range for this movement - when it is out of the range, the command will end.
-   * This limit is tested against the subsystem's {@link SubsystemEG#getDistance() getDistance()} method. 
-   * 
-   * @param speedModifier - A modifier for the speeds given. Espically usefull when the main suppliers come,
-   * for example, from joystick.
-   * 
-   * @param speedMap - A {@link Map} which {@link MotorController} indexes on the subsystem to speed
-   * suppliers to set.
-   *  
-   * @param log - Wether to log this commandn the shuffleboard or not.
-   */
-  //This is the most complex constructor - and all other constructors just call it with default values
-  public SetMotorSystem(String name, MotorSubsystem subsystem, Range limit, Supplier<Double> speedModifier,
-    Map<Integer, Supplier<Double>> speedMap, boolean log) {
-    super(name, log, subsystem);
-    
-    m_subsystem = subsystem;
-    m_speedMap = speedMap;
-    m_speedModifier = speedModifier;
-    m_limit = limit;
-  }
 
   
   
@@ -98,75 +65,12 @@ public class SetMotorSystem extends CommandEG {
    */
   public SetMotorSystem(String name, MotorSubsystem subsystem, Range limit, Supplier<Double> speedModifier,
     Map<Integer, Supplier<Double>> speedMap) {
-    this(name, subsystem, limit, speedModifier, speedMap, DEFAULT_LOG);
-  }
-
-
-  /**
-   * Constructs a new unmodified {@link SetMotorSystem} with ranged movement 
-   * according to input parameters 
-   * 
-   * @param name - The command's name (corresponding to its {@link #getName()} method, shuffleboard switch
-   * and Loggable values.
-   * 
-   * @param subsystem - The subsystem to move.
-   * 
-   * @param limit - The range for this movement - when it is out of the range, the command will end.
-   * This limit is tested against the subsystem's {@link SubsystemEG#getDistance() getDistance()} method. 
-   * @param speedMap - A {@link Map} which {@link MotorController} indexes on the subsystem to speed
-   * suppliers to set.
-   *  
-   * @param log - Wether to log this commandn the shuffleboard or not.
-   */
-  public SetMotorSystem(String name, MotorSubsystem subsystem, Range limit, Map<Integer, Supplier<Double>> speedMap, boolean log) {
-    this(name, subsystem, limit, DEFAULT_MODIFIER, speedMap, log);
-  }
-
-
-
-  /**
-   * Constructs a new limitless {@link SetMotorSystem} according to input parameters 
-   * 
-   * @param name - The command's name (corresponding to its {@link #getName()} method, shuffleboard switch
-   * and Loggable values.
-   * 
-   * @param subsystem - The subsystem to move.
-   * 
-   * @param limit - The range for this movement - when it is out of the range, the command will end.
-   * This limit is tested against the subsystem's {@link SubsystemEG#getDistance() getDistance()} method. 
-   * 
-   * @param speedModifier - A modifier for the speeds given. Espically usefull when the main suppliers come,
-   * for example, from joystick.
-   * 
-   * @param speedMap - A {@link Map} which {@link MotorController} indexes on the subsystem to speed
-   * suppliers to set.
-   *  
-   * @param log - Wether to log this commandn the shuffleboard or not.
-   */
-  public SetMotorSystem(String name, MotorSubsystem subsystem, Supplier<Double> speedModifier,
-   Map<Integer, Supplier<Double>> speedMap, boolean log) {
-     this(name, subsystem, DEFAULT_RANGE, speedMap, log);
-  }
-
-
-  /**
-   * Constructs a new limitless unmodified {@link SetMotorSystem} according to input parameters 
-   * 
-   * @param name - The command's name (corresponding to its {@link #getName()} method, shuffleboard switch
-   * and Loggable values.
-   * 
-   * @param subsystem - The subsystem to move.
-   * 
-   * @param limit - The range for this movement - when it is out of the range, the command will end.
-   * This limit is tested against the subsystem's {@link SubsystemEG#getDistance() getDistance()} method. 
-   * 
-   * @param speedMap - A {@link Map} which {@link MotorController} indexes on the subsystem to speed
-   * suppliers to set.
-   *  
-   * @param log - Wether to log this commandn the shuffleboard or not.
-   */
-  public SetMotorSystem(String name, MotorSubsystem subsystem, Map<Integer, Supplier<Double>> speedMap, boolean log) {
-    this(name, subsystem, DEFAULT_RANGE, DEFAULT_MODIFIER, speedMap, log);
+      super(name, subsystem);
+      
+      m_subsystem = subsystem;
+      m_speedMap = speedMap;
+      m_speedModifier = speedModifier;
+      m_limit = limit;
   }
 
     /**
@@ -189,7 +93,7 @@ public class SetMotorSystem extends CommandEG {
    */
   public SetMotorSystem(String name, MotorSubsystem subsystem, Supplier<Double> speedModifier,
    Map<Integer, Supplier<Double>> speedMap) {
-     this(name, subsystem, DEFAULT_RANGE, speedModifier, speedMap, DEFAULT_LOG);
+     this(name, subsystem, DEFAULT_RANGE, speedModifier, speedMap);
   }
   
   /**
@@ -209,7 +113,7 @@ public class SetMotorSystem extends CommandEG {
    * @param log - Wether to log this commandn the shuffleboard or not.
    */
   public SetMotorSystem(String name, MotorSubsystem subsystem, Range limit, Map<Integer, Supplier<Double>> speedMap) {
-    this(name, subsystem, limit, DEFAULT_MODIFIER, speedMap, DEFAULT_LOG);
+    this(name, subsystem, limit, DEFAULT_MODIFIER, speedMap);
   }
 
   /**
@@ -225,7 +129,7 @@ public class SetMotorSystem extends CommandEG {
    * suppliers to set.
    */
   public SetMotorSystem(String name, MotorSubsystem subsystem, Map<Integer, Supplier<Double>> speedMap) {
-    this(name, subsystem, DEFAULT_RANGE, DEFAULT_MODIFIER, speedMap, DEFAULT_LOG);
+    this(name, subsystem, DEFAULT_RANGE, DEFAULT_MODIFIER, speedMap);
   }
 
 
