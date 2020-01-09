@@ -3,9 +3,9 @@ package com.evergreen.everlib.subsystems.sensors;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.evergreen.everlib.utils.loggables.LoggableData;
-import com.evergreen.everlib.utils.loggables.LoggableDouble;
-import com.evergreen.everlib.utils.loggables.LoggableObject;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableObject;
 
 /**
  * SensorGroup
@@ -16,7 +16,6 @@ public class DistanceSensorGroup extends DistanceSensor implements LoggableObjec
 
     public DistanceSensorGroup(DistanceSensor... sensors) {
         m_sesnsors = List.of(sensors);
-        
     }
 
     @Override
@@ -47,7 +46,7 @@ public class DistanceSensorGroup extends DistanceSensor implements LoggableObjec
         List<LoggableData> loggables = new ArrayList<>();
 
         for (DistanceSensor sensor : m_sesnsors) { 
-            loggables.add(new LoggableDouble(getSubsystem() + " - sensors - " + sensor.toString(),
+            loggables.add(new LoggableDouble(getSubsystem() + "/sensors/" + sensor.toString(),
             sensor::getDistance));
         }
 
