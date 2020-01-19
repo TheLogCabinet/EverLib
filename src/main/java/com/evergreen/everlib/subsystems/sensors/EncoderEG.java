@@ -1,153 +1,121 @@
 package com.evergreen.everlib.subsystems.sensors;
 
-import com.evergreen.everlib.utils.ranges.Range;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANEncoder;
 
 import edu.wpi.first.wpilibj.Encoder;
 
 /**
- * A wrapper class for {@link Encoder} which extends {@link DistanceSensor},
- * and as such allowes for easier calibration and error-proofing.
- * 
- * @author Atai Ambus
+ * EncoderBase
  */
 public class EncoderEG extends DistanceSensor {
 
-    /**
-     * The wrapped encoder object.
-     */
-    private Encoder m_encoder;
+    double m_distancePerPulse;
+    Supplier<Integer> m_ticksSupplier;
+    Consumer<Integer> m_ticksSetter;
+    double m_lastPosition;
+    double m_lastCalculation;
 
+    //TODO Try moving ensor tuning to RobotInit().
 
-    /**
-     * Constructs an {@link EncoderEG} object according to input sources, encoder offset and 
-     * limits.
-     *      
-     * @param encoder - The encoder to wrap.
-     * @param absoluteLimit - The absolute limits that it should  be able to mesure. for example, an
-     * elevator's height.
-     * @param offset - The offset from the point of mesurement. For example, its height on an elevator.
-     * @param distancePerPulse - the distance the subsystem passes with each encoder tick.
-     */
-    public EncoderEG(Encoder encoder, Range absoluteLimit, double offset, double distancePerPulse) {
-        this(encoder, absoluteLimit, offset);
-        m_encoder.setDistancePerPulse(distancePerPulse);
+    private EncoderEG(Supplier<Integer> ticksSupplier,
+     Consumer<Integer> ticksSetter, double distancePerPulse) {
+        m_ticksSupplier = ticksSupplier;
+        m_distancePerPulse = distancePerPulse;
+
+        m_lastPosition = 0;
+        m_lastCalculation = 0;
     }
 
-    /**
-     * Constructs an {@link EncoderEG} object according to input sources, encoder offset and 
-     * limits.
-     * @param encoder - The encoder to wrap.
-     * @param absoluteLimit - The absolute limits that it should  be able to mesure. for example, an
-     * elevator's height.
-     * @param offset - The offset from the point of mesurement. For example, its height on an elevator.
-     */
-    //All other constructors call this one, fillinng the gaps with default values.
-    public EncoderEG(Encoder encoder, Range absoluteLimit, double offset) {
-        super(absoluteLimit, offset);
-        m_encoder = encoder;
+    public EncoderEG(CANEncoder wrappedEncoder, double distancePerPulse) {
+        
+
+        this( 
+            () -> (int)wrappedEncoder.getPosition() / 
+                //Divide by pos factor to make sure to get ticksSupplier instead of distance.
+                (int)wrappedEncoder.getPositionConversionFactor(),
+            (position) -> wrappedEncoder.setPosition(position), 
+            distancePerPulse);
     }
     
-
-
-    /**
-     * Constructs an {@link EncoderEG} object according to input sources, encoder offset and 
-     * limits.
-     * @param portA - The first source of the encoder.
-     * @param portB - The second source fo the encoder.
-     * @param absoluteLimit - The absolute limits that it should  be able to mesure. for example, an
-     * elevator's height.
-     * @param offset - The offset from the point of mesurement. For example, its height on an elevator.
-     */
-    //All other constructors call this one, fillinng the gaps with default values.
-    public EncoderEG(int portA, int portB, Range absoluteLimit, double offset) {
-        this(new Encoder(portA, portB), absoluteLimit, offset);
+    public EncoderEG(CANEncoder wrappedEncoder) {
+        this(wrappedEncoder, 1);
     }
 
 
-    /**
-     * Constructs an {@link EncoderEG} object according to input sources, encoder offset and 
-     * limits.
-     * @param portA - The first source of the encoder.
-     * @param portB - The second source fo the encoder.
-     * @param absoluteLimit - The absolute limits that it should  be able to mesure. for example, an
-     * elevator's height.
-     * @param offset - The offset from the point of mesurement. For example, its height on an elevator.
-     * @param distancePerPulse - the distance the subsystem passes with each encoder tick.
-     */
-    public EncoderEG(int portA, int portB, Range absoluteLimit, double offset, double distancePerPulse) {
-        this(new Encoder(portA, portB), absoluteLimit, offset, distancePerPulse);
+    public EncoderEG(WPI_TalonSRX wrappedEncoder, double distancePerPulse) {
+        this(
+           wrappedEncoder::getSelectedSensorPosition, 
+           wrappedEncoder::setSelectedSensorPosition,
+           distancePerPulse);
     }
-
     
-    /**
-     * Constructs an {@link EncoderEG} object according to input sources.
-     * limits.
-     * @param portA - The first source of the encoder.
-     * @param portB - The second source fo the encoder.
-     */
-    public EncoderEG(int portA, int portB) {  
-        this(portA, portB, (v) -> true, 0);
+    public EncoderEG(WPI_TalonSRX wrappedEncoder) {
+        this(wrappedEncoder, 1);
     }
 
-
-    /**
-     * Constructs an {@link EncoderEG} object according to input sources and encoder offset.
-     * @param portA - The first source of the encoder.
-     * @param portB - The second source fo the encoder.
-     * @param offset - The offset from the point of mesurement. For example, its height on ann elevator.
-     */
-    public EncoderEG(int portA, int portB, double offset) {
-        this(portA, portB, (v) -> true, offset);        
+    public EncoderEG(Encoder wrappedEncoder, double distancePerPulse) {
+        this(wrappedEncoder::getRaw,
+        (position) -> wrappedEncoder.reset(),
+        distancePerPulse);
+    }
+    
+    public EncoderEG(Encoder wrappedEncoder) {
+        this(wrappedEncoder, 1);
+    }
+    
+    public EncoderEG(int portA, int portB, double distancePerPulse) {
+        this(new Encoder(portA, portB), distancePerPulse);
     }
 
-
-    /**
-     * Constructs an {@link EncoderEG} object according to input sources and limits.
-     * @param portA - The first source of the encoder.
-     * @param portB - The second source fo the encoder.
-     * @param absoluteLimit - The absolute limits that it should  be able to mesure. for example, an
-     * elevator's height.
-     */
-    public EncoderEG(int portA, int portB, Range absoluteLimit) {
-        this(portA, portB, absoluteLimit, 0);
+    public EncoderEG(int portA, int portB) {
+        this(portA, portB, 1);
     }
 
-    /**
-     * Sets the distance per pulse according to an input value. 
-     * @param value - the value to set.
-     */
-    public void setDistancePerPulse(double value) {
-        m_encoder.setDistancePerPulse(value);
+    public double getTicks() {
+        return m_ticksSupplier.get();
     }
 
-    /** 
-     * Sets the distance per pulse according to the encoder's ticks per mototr rotation and
-     * the diameter of wheels.
-     * @param ticksPerRevolution - the amount of ticks per motor revolutoion.
-     * @param diameter - The amount of ticks per
-    */
-    public void setDistancePerPulse(double ticksPerRevolution, double diameter) {
-        m_encoder.setDistancePerPulse(1/ticksPerRevolution * diameter * Math.PI);
+    public double getPosition() {
+        m_lastPosition =  m_ticksSupplier.get() * m_distancePerPulse;
+        m_lastCalculation = System.currentTimeMillis() / 1000;
+
+        return m_lastPosition;
     }
 
-    /**Resets the encoder's distance to 0. */
+    public double getSpeed() {
+
+        //Save the last time, sinmce getPosition will override it.
+        double lastPosition = m_lastPosition; 
+
+        double now = System.currentTimeMillis() / 1000;
+        return (getPosition() - lastPosition) / ( now - m_lastCalculation);
+    }
+
+    public double getDistancePerPulse() {
+        return m_distancePerPulse;
+    }
+    public void setDistancePerPulse(double distancePerPulse) {
+        m_distancePerPulse = distancePerPulse;
+    }
+
+    public void setPosition(double position) {
+        m_ticksSetter.accept( (int)(position / m_distancePerPulse) );
+        getPosition();
+    }
+
     public void reset() {
-        m_encoder.reset();
-    }
-
-    /**
-     * Since {@link EncoderEG} is a wrapped class, and the encoder is usually used exclusively
-     * for relatively simple distance mesurement, most of its methods were not implemented directly.
-     * This method return the wrapped {@link Encoder} object for the programmer to use.
-     * 
-     * @return the wrapped encoder object.
-     */
-    public Encoder getEncoder() {
-        return m_encoder;
+        setPosition(0);
     }
 
     @Override
     protected double _getDistance() {
-        return m_encoder.getDistance();
+        return getPosition();
     }
+
+    
+
 }

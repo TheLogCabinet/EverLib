@@ -19,38 +19,36 @@ public class MotorSubsystem extends SubsystemEG {
 
     /**The range in which the subsystem is allowed to move. */
     protected Range m_Range;
-
-    /**The sensor mesuring the distance the subsystem has gone. */
-    protected DistanceSensor m_distanceSensor;
-    
     public MotorSubsystem(String name, MotorController... motors)
     {
-        super(name);    
+        super(name);
         m_controllers = motors;
         m_Range = (v) -> true;
+        
+        for (MotorController motor : m_controllers) {
+            for (DistanceSensor sensor : motor.getEncoders()) {
+                addSensor(sensor);
+            }
+        }
     }
 
     public MotorSubsystem(String name, DistanceSensor distanceSensor, MotorController... motors) {
-        super(name);
-        m_controllers = motors;
-        m_distanceSensor = distanceSensor;
+        this(name, motors);
+        addSensor(distanceSensor);
     }
 
     public MotorSubsystem(String name, DistanceSensor sensor, Range range, MotorController... motors)
     {
-        super(name);
-        m_controllers = motors;
-        m_distanceSensor = sensor;
+        this(name, sensor, motors);
         m_Range = range;
+        
     }
 
-    public MotorSubsystem(String name, DistanceSensor distanceSensor, Range Range, 
+    public MotorSubsystem(String name, DistanceSensor distanceSensor, Range range, 
         Command defaultCommand, MotorController... motors)
     {
-        super(name, defaultCommand);
-        m_controllers = motors;
-        m_distanceSensor = distanceSensor;
-        m_Range = Range;
+        this(name, distanceSensor, range, motors);
+        setDefaultCommand(defaultCommand);
     }
 
 
