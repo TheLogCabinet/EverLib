@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public abstract class SubsystemEG extends SubsystemBase implements Exceptions, LoggableObject {
 
     protected ConstantBoolean m_subsystemSwitch;
-    private DistanceSensor m_distanceSensor;
+    protected DistanceSensorGroup m_distanceSensor = new DistanceSensorGroup();
 
     public SubsystemEG(String name) {
         setName(name);
@@ -34,7 +34,7 @@ public abstract class SubsystemEG extends SubsystemBase implements Exceptions, L
 
     public SubsystemEG(String name, Command defaultCommand, DistanceSensor distanceSesnsor) {
         this(name, defaultCommand);
-        m_distanceSensor = distanceSesnsor;
+        addSensor(distanceSesnsor);
         m_distanceSensor.setSubsystem(this);
     }
 
@@ -46,15 +46,19 @@ public abstract class SubsystemEG extends SubsystemBase implements Exceptions, L
         return m_subsystemSwitch.get();
     }
 
+    public void addSensor(DistanceSensor sensor) {
+        m_distanceSensor.addSensor(sensor);
+    }
+
 
     public double getDistance() throws SensorDoesNotExistException {
-        try {
+        if (m_distanceSensor.isEmpty())
             return m_distanceSensor.getDistance();
-        } 
+        else
+            throw new SensorDoesNotExistException(
+                "Tried to get the distance of " + getName() 
+                + ", but it does not have a distance sensor!");
 
-        catch (NullPointerException e) {
-            throw new SensorDoesNotExistException(getName() + " does not have a distance sensor!");
-        }
     }
 
     @Override

@@ -81,4 +81,16 @@ public abstract class DistanceSensor {
     public boolean killed() {
         return m_killSwitch;
     }
+
+    public void setAbsoluteLimits(Range absoluteLimits) {
+        m_absoluteLimits = absoluteLimits;
+    }
+
+    public void setOffset(double offset) {
+        m_offset = offset;
+    }
+
+    public double getOffset() {
+        return m_offset;
+    }
 }

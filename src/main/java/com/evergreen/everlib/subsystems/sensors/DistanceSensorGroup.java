@@ -11,11 +11,11 @@ import com.evergreen.everlib.shuffleboard.loggables.LoggableObject;
  * SensorGroup
  */
 public class DistanceSensorGroup extends DistanceSensor implements LoggableObject {
-    List<DistanceSensor> m_sesnsors;
+    List<DistanceSensor> m_sensors;
     int sum;
 
     public DistanceSensorGroup(DistanceSensor... sensors) {
-        m_sesnsors = List.of(sensors);
+        m_sensors = List.of(sensors);
     }
 
     @Override
@@ -23,17 +23,21 @@ public class DistanceSensorGroup extends DistanceSensor implements LoggableObjec
         int sum = 0;
 
 
-        for (DistanceSensor sensor : m_sesnsors) {
+        for (DistanceSensor sensor : m_sensors) {
 
             if (sensor.killed()) {
-                m_sesnsors.remove(sensor);
+                m_sensors.remove(sensor);
                 continue;
             }
 
             sum += sensor.getDistance();
         }
 
-        return sum / m_sesnsors.size();
+        return sum / m_sensors.size();
+    }
+
+    public boolean isEmpty() {
+        return m_sensors.size() == 0;
     }
 
     @Override
@@ -41,11 +45,19 @@ public class DistanceSensorGroup extends DistanceSensor implements LoggableObjec
         return getSubsystem() + " - Distance sensor";
     }
 
+    public void addSensor(DistanceSensor sensor) {
+        m_sensors.add(sensor);
+    }
+
+    public List<DistanceSensor> getSensors() {
+        return m_sensors;
+    }
+
     @Override
     public List<LoggableData> getLoggableData() {
         List<LoggableData> loggables = new ArrayList<>();
 
-        for (DistanceSensor sensor : m_sesnsors) { 
+        for (DistanceSensor sensor : m_sensors) { 
             loggables.add(new LoggableDouble(getSubsystem() + "/sensors/" + sensor.toString(),
             sensor::getDistance));
         }
