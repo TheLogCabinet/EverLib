@@ -5,8 +5,8 @@ import java.util.function.Supplier;
 
 import com.evergreen.everlib.CommandEG;
 import com.evergreen.everlib.utils.PIDSettings;
-import com.evergreen.everlib.utils.loggables.LoggableData;
-import com.evergreen.everlib.utils.loggables.LoggableDouble;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
 
 
 /**

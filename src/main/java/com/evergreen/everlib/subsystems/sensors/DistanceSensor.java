@@ -8,6 +8,7 @@
 package com.evergreen.everlib.subsystems.sensors;
 
 import com.evergreen.everlib.subsystems.SubsystemEG;
+import com.evergreen.everlib.utils.ranges.Limitless;
 import com.evergreen.everlib.utils.ranges.Range;
 
 /**
@@ -23,11 +24,11 @@ public abstract class DistanceSensor {
 
 
     public DistanceSensor() {
-        this( (v) -> true, 0);
+        this(new Limitless(), 0);
     }
 
     public DistanceSensor(double offset) {
-        this( (v) -> true, offset );
+        this(new Limitless(), offset );
     }
 
     public DistanceSensor(Range absoluteLimit) {
@@ -48,6 +49,8 @@ public abstract class DistanceSensor {
         if (!m_killSwitch && !m_absoluteLimits.inRange(distance)) {
             m_killSwitch = true;
         }
+
+        if (m_killSwitch) return 0;
 
         return distance;
 
@@ -78,5 +81,17 @@ public abstract class DistanceSensor {
 
     public boolean killed() {
         return m_killSwitch;
+    }
+
+    public void setAbsoluteLimits(Range absoluteLimits) {
+        m_absoluteLimits = absoluteLimits;
+    }
+
+    public void setOffset(double offset) {
+        m_offset = offset;
+    }
+
+    public double getOffset() {
+        return m_offset;
     }
 }

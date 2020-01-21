@@ -1,11 +1,11 @@
 package com.evergreen.everlib.utils;
 
-import java.util.function.Supplier;
-
-import com.evergreen.everlib.shuffleboard.handlers.DashboardConstants;
+import com.evergreen.everlib.shuffleboard.constants.ConstantDouble;
+import com.evergreen.everlib.shuffleboard.constants.DashboardConstants;
 import com.evergreen.everlib.subsystems.SubsystemEG;
 import com.evergreen.everlib.subsystems.motors.subsystems.MotorSubsystem;
-import com.wpilib2020.deps.PIDController;
+
+import edu.wpi.first.wpilibj.controller.PIDController;
 
 /**
  * A utillity class to easily keep constant parameters, and to avoid cluttering constructors.
@@ -13,20 +13,21 @@ import com.wpilib2020.deps.PIDController;
 public class PIDSettings {
 
     /**Proportional constant supplier*/
-    private final Supplier<Double> m_P;
+    private final ConstantDouble m_P;
     /**Integral Constant supplier*/
-    private final Supplier<Double> m_I;
+    private final ConstantDouble m_I;
     /**Derivative constant supplier */
-    private final Supplier<Double> m_D;
+    private final ConstantDouble m_D;
     /**Feedforward constant supplier*/
-    private final Supplier<Double> m_F;
+    private final ConstantDouble m_F;
     /**Tolernace supplier */
-    private final Supplier<Double> m_tolerance;
-
-    private final Supplier<Double> m_period;
+    private final ConstantDouble m_tolerance;
+    /**Time between each calculation cycle */
+    private final ConstantDouble m_period;
     /**The controller to write the information into.*/
     private final MotorSubsystem m_subsystem;
 
+    private final PIDType m_type;
 
     private final PIDController m_controller;
 
@@ -41,29 +42,34 @@ public class PIDSettings {
      * @param kP - The proportional constants.
      * @param kI - The integral constant
      * @param kD - The derivative constant.
-     * @param tolerance - the loop's tolerance; St what point away from the target should the loop
+     * @param tolerance - the loop's tolerance; At what point away from the target should the loop
      * be satisfied?
      * @param kF - The feed-forward constant.
      * @param period - The time between each controller update. 
     */
-    public PIDSettings(MotorSubsystem subsystem, double kP, double kI, double kD, 
+    public PIDSettings(MotorSubsystem subsystem, PIDType type, double kP, double kI, double kD, 
         double tolerance, double kF, double period) {
 
-        m_P = DashboardConstants.addDouble(subsystem.getName() + " PID - kP (Value Supplier)", kP);
-        m_I = DashboardConstants.addDouble(subsystem.getName() + " PID - kI (Value Supplier)", kI);
-        m_D = DashboardConstants.addDouble(subsystem.getName() + " PID - kD (Value Supplier)", kD);
-        m_F = DashboardConstants.addDouble(subsystem.getName() + " PID - kF (Value Supplier)", kF);
+        DashboardConstants.getInstance().pushd("/" + subsystem.getName() + "/PID");
+
+        m_P = new ConstantDouble("kP", kP);
+        m_I = new ConstantDouble("kI", kI);
+        m_D = new ConstantDouble("kD", kD);
+        m_F = new ConstantDouble("kF", kF);
         
-        m_tolerance = DashboardConstants.addDouble(
-            subsystem.getName() + " PID - Tolerance", tolerance);
+        m_tolerance = new ConstantDouble(
+            subsystem.getName() + "Tolerance", tolerance);
         
-        m_period = DashboardConstants.addDouble(
-            subsystem.getName() + " PID - Period", period);   
+        m_period = new ConstantDouble(
+            subsystem.getName() + "Period", period);   
 
         m_controller = new PIDController(kP, kI, kD, period);
         m_controller.setTolerance(tolerance);
 
         m_subsystem = subsystem;
+        m_type = type;
+
+        DashboardConstants.getInstance().popd();
     }
 
     /**
@@ -77,9 +83,9 @@ public class PIDSettings {
      * be satisfied?
      * @param kF - The feed-forward constant.
     */
-    public PIDSettings(MotorSubsystem subsystem, double kP, double kI, double kD, 
+    public PIDSettings(MotorSubsystem subsystem, PIDType type, double kP, double kI, double kD, 
         double tolerance, double kF) {
-            this(subsystem, kP, kI, kD, tolerance, kF, DEFAULT_PERIOD);
+            this(subsystem, type, kP, kI, kD, tolerance, kF, DEFAULT_PERIOD);
     }
 
 
@@ -93,9 +99,9 @@ public class PIDSettings {
      * @param tolerance - the loop's tolerance; St what point away from the target should the loop
      * be satisfied?
     */
-    public PIDSettings(MotorSubsystem subsystem, double kP, double kI, double kD, 
+    public PIDSettings(MotorSubsystem subsystem, PIDType type, double kP, double kI, double kD, 
         double tolerance) {
-            this(subsystem, kP, kI, kD, tolerance, DEFAULT_F, DEFAULT_PERIOD);
+            this(subsystem, type, kP, kI, kD, tolerance, DEFAULT_F, DEFAULT_PERIOD);
     }
 
     /**
@@ -107,8 +113,8 @@ public class PIDSettings {
      * @param kI - The integral constant
      * @param kD - The derivative constant.
     */
-    public PIDSettings(MotorSubsystem subsystem, double kP, double kI, double kD) {
-            this(subsystem, kP, kI, kD, DEFAULT_TOLEANCE, DEFAULT_F, DEFAULT_PERIOD);
+    public PIDSettings(MotorSubsystem subsystem, PIDType type, double kP, double kI, double kD) {
+            this(subsystem, type, kP, kI, kD, DEFAULT_TOLEANCE, DEFAULT_F, DEFAULT_PERIOD);
     }
 
 
@@ -133,7 +139,7 @@ public class PIDSettings {
     }
 
     public double getMeasurment() {
-        return m_subsystem.getDistance();
+        return m_type.mesureWith(m_subsystem);
     }
 
     public double getPeriod() {
@@ -150,5 +156,26 @@ public class PIDSettings {
 
     public SubsystemEG getSubsystem() {
         return m_subsystem;
+    }
+
+    @FunctionalInterface
+    private interface Mesurement {
+        public double mesure(MotorSubsystem subsystem);
+    }
+
+    public enum PIDType {
+        POSITION((system) -> system.getPosition()),
+        VELOCITY((system) -> system.getVelocity());/*,
+        ANGLE;*/
+
+        private Mesurement m_mesurement;
+
+        private PIDType(Mesurement mesurement) {
+            m_mesurement = mesurement;
+        }
+
+        public double mesureWith(MotorSubsystem system) {
+            return m_mesurement.mesure(system);
+        }
     }
 }

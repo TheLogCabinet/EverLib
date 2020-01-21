@@ -14,9 +14,8 @@ import java.util.Map;
 
 import java.util.function.Supplier;
 
-import com.evergreen.everlib.shuffleboard.handlers.Switch;
 import com.evergreen.everlib.subsystems.motors.subsystems.MotorSubsystem;
-import com.evergreen.everlib.utils.loggables.LoggableDouble;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
 import com.evergreen.everlib.utils.ranges.Range;
 
 /**
@@ -24,27 +23,11 @@ import com.evergreen.everlib.utils.ranges.Range;
  */
 public class MoveMotorSystem extends SetMotorSystem {
 
-
   /**
    * Constructs a {@link MoveMotorSystem Move1ControlSystem Command} according to input parameters.
    * 
    * @param name - The name of the command, corresponding to its {@link #getName()} method and to its
-   * {@link Switch shuffleboard switch}
-   * @param subsystem - The subsystem to move.
-   * @param speed - The speed supplier ywhich will supply the speed to move the subsystem.
-   * @param speedRange - The range in which to move the subsystem.
-   * @param log - whether to log this command on the shuffleboard 
-   */
-  public MoveMotorSystem(String name, MotorSubsystem subsystem, Supplier<Double> speed, Range speedRange,
-  boolean log) {
-    super(name, subsystem, speedRange,  getMap(speed, subsystem), log);
-  }
-
-  /**
-   * Constructs a {@link MoveMotorSystem Move1ControlSystem Command} according to input parameters.
-   * 
-   * @param name - The name of the command, corresponding to its {@link #getName()} method and to its
-   * {@link Switch shuffleboard switch}
+   * {@link ConstantBoolean shuffleboard switch}
    * @param subsystem - The subsystem to move.
    * @param speed - The speed supplier ywhich will supply the speed to move the subsystem.
    * @param speedRange - The range in which to move the subsystem.
@@ -57,7 +40,7 @@ public class MoveMotorSystem extends SetMotorSystem {
    * Constructs a {@link MoveMotorSystem Move1ControlSystem Command} according to input parameters.
    * 
    * @param name - The name of the command, corresponding to its {@link #getName()} method and to its
-   * {@link Switch shuffleboard switch}
+   * {@link ConstantBoolean shuffleboard switch}
    * @param subsystem - The subsystem to move.
    * @param speed - The speed supplier ywhich will supply the speed to move the subsystem.
    * @param speedModifier - the value modifier for the speed supplier fo this movement
@@ -68,42 +51,11 @@ public class MoveMotorSystem extends SetMotorSystem {
     super(name, subsystem, speedRange, speedModifier, getMap(speed, subsystem));
   }
 
-
-  /**
-   * Constructs a {@link MoveMotorSystem Move1ControlSystem Command} according to input parameters.
-   * 
-   * @param name - The name of the command, corresponding to its {@link #getName()} method and to its
-   * {@link Switch shuffleboard switch}
-   * @param subsystem - The subsystem to move.
-   * @param speed - The speed supplier ywhich will supply the speed to move the subsystem.
-   * @param speedModifier - the value modifier for the speed supplier fo this movement
-   * @param speedRange - The range in which to move the subsystem.
-   * @param log - whether to log this command on the shuffleboard 
-   */
-  public MoveMotorSystem(String name, MotorSubsystem subsystem, Supplier<Double> speed,
-    Supplier<Double> speedModifier, Range speedRange, boolean log) {
-    super(name, subsystem, speedRange, speedModifier, getMap(speed, subsystem), log);
-  }
-
-
   /**
   * Constructs a {@link MoveMotorSystem Move1ControlSystem Command} according to input parameters.
   * 
   * @param name - The name of the command, corresponding to its {@link #getName()} method and to its
-  * {@link Switch shuffleboard switch}
-  * @param subsystem - The subsystem to move.
-  * @param speed - The speed supplier which will supply the speed to move the subsystem.
-  * @param log - whether to log this command on the shuffleboard 
-  */
-  public MoveMotorSystem(String name, MotorSubsystem subsystem, Supplier<Double> speed, boolean log) {
-    super(name, subsystem, getMap(speed, subsystem), log);
-  }
-
-  /**
-  * Constructs a {@link MoveMotorSystem Move1ControlSystem Command} according to input parameters.
-  * 
-  * @param name - The name of the command, corresponding to its {@link #getName()} method and to its
-  * {@link Switch shuffleboard switch}
+  * {@link ConstantBoolean shuffleboard switch}
   * @param subsystem - The subsystem to move.
   * @param speed - The speed supplier which will supply the speed to move the subsystem.
   */
@@ -111,27 +63,11 @@ public class MoveMotorSystem extends SetMotorSystem {
     super(name, subsystem, getMap(speed, subsystem));
   }
 
-
   /**
   * Constructs a {@link MoveMotorSystem Move1ControlSystem Command} according to input parameters.
   * 
   * @param name - The name of the command, corresponding to its {@link #getName()} method and to its
-  * {@link Switch shuffleboard switch}
-  * @param subsystem - The subsystem to move.
-  * @param speed - The speed supplier ywhich will supply the speed to move the subsystem.
-  * @param speedModifier - the value modifier for the speed supplier fo this movement
-  * @param log - whether to log this command on the shuffleboard 
-  */
-  public MoveMotorSystem(String name, MotorSubsystem subsystem, Supplier<Double> speed, 
-    Supplier<Double> speedModifier, boolean log) {
-    super(name, subsystem, speedModifier, getMap(speed, subsystem), log);
-  }
-
-  /**
-  * Constructs a {@link MoveMotorSystem Move1ControlSystem Command} according to input parameters.
-  * 
-  * @param name - The name of the command, corresponding to its {@link #getName()} method and to its
-  * {@link Switch shuffleboard switch}
+  * {@link ConstantBoolean shuffleboard switch}
   * @param subsystem - The subsystem to move.
   * @param speed - The speed supplier ywhich will supply the speed to move the subsystem.
   * @param speedModifier - the value modifier for the speed supplier fo this movement

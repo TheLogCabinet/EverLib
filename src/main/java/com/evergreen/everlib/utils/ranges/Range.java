@@ -10,6 +10,7 @@ package com.evergreen.everlib.utils.ranges;
 /**
  * Add your docs here.
  */
+@FunctionalInterface
 public interface Range {
     public boolean inRange(double value);
 }

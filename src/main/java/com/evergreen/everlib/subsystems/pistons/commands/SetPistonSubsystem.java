@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.evergreen.everlib.CommandEG;
 import com.evergreen.everlib.subsystems.pistons.subsystems.PistonSubsystem;
-import com.evergreen.everlib.utils.loggables.LoggableData;
-import com.evergreen.everlib.utils.loggables.LoggableString;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableString;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
@@ -16,11 +16,7 @@ public class SetPistonSubsystem extends CommandEG {
   private PistonSubsystem m_pistons;
   
   public SetPistonSubsystem(String name, PistonSubsystem pistons, Value state) {
-    this(name, pistons, state, false);
-  }
-  
-  public SetPistonSubsystem(String name, PistonSubsystem pistons, Value state, boolean log) {
-    super(name, log, pistons);
+    super(name, pistons);
     m_state = state;
     m_pistons = pistons;
   }

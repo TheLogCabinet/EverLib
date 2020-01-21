@@ -33,11 +33,11 @@ public class LaserSensor extends DistanceSensor {
         m_intercept = intercept;
     }
 
-    public void setConverterByPoints(double voltage1, double distance1, double voltag2, double distance2)
+    public void setConverterByPoints(double voltage1, double distance1, double voltage2, double distance2)
     {
-        double slope = (distance2 - distance1) / (voltag2 - voltage1);
+        double slope = (distance2 - distance1) / (voltage2 - voltage1);
         m_slope = () -> slope;
-        m_intercept = () -> distance2 - (voltag2 * slope);
+        m_intercept = () -> distance2 - (voltage2 * slope);
     }
 
     public void setConverterByPoints(Point point1, Point point2) {

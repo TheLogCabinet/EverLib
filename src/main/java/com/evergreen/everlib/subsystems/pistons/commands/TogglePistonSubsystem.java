@@ -4,21 +4,17 @@ import java.util.List;
 
 import com.evergreen.everlib.CommandEG;
 import com.evergreen.everlib.subsystems.pistons.subsystems.PistonSubsystem;
-import com.evergreen.everlib.utils.loggables.LoggableData;
-import com.evergreen.everlib.utils.loggables.LoggableString;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableString;
 
 /**TogglePistonSubsystem */
 public class TogglePistonSubsystem extends CommandEG {
 
    PistonSubsystem m_pistons;
-     
-   public TogglePistonSubsystem(String name, PistonSubsystem pistons, boolean log) {
-    super(name, log, pistons);
-    m_pistons = pistons;
-   }
   
    public TogglePistonSubsystem(String name, PistonSubsystem pistons) {
-      this(name, pistons, false);
+    super(name, pistons);
+    m_pistons = pistons;
    }
 
   // Called repeatedly when this Command is scheduled to run

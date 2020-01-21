@@ -3,20 +3,21 @@ package com.evergreen.everlib.subsystems.motors.commands;
 import java.util.function.Supplier;
 
 import com.evergreen.everlib.utils.PIDSettings;
-import com.wpilib2020.framework.PIDCommand;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 
 /**
- * _RunPID
+ * Wrapps WPILib's {@link PIDCommand} to use supplier constants rather than plain doubles,
+ * and
  */
 public class _RunPID extends PIDCommand { 
 
     PIDSettings m_settings;
 
-    public _RunPID(String name, PIDSettings pidSettings, Supplier<Double> target) {
+    public _RunPID(String name, PIDSettings pidSettings, Supplier<Double> setpoint) {
         super(
             pidSettings.getController(),
             pidSettings::getMeasurment,
-            () -> target.get(),
+            setpoint::get,
             pidSettings::write,
             pidSettings.getSubsystem());
 
@@ -27,7 +28,6 @@ public class _RunPID extends PIDCommand {
     public void execute() {
         super.execute();
         m_controller.setPID(m_settings.kP(), m_settings.kI(), m_settings.kD());
-
         m_controller.setTolerance(m_settings.getTolerance());
     }
 
