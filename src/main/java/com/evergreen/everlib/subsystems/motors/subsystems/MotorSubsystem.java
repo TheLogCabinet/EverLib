@@ -7,6 +7,7 @@ import com.evergreen.everlib.subsystems.SubsystemEG;
 import com.evergreen.everlib.subsystems.sensors.DistanceSensor;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
+import com.evergreen.everlib.utils.ranges.Limitless;
 import com.evergreen.everlib.utils.ranges.Range;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -23,7 +24,7 @@ public class MotorSubsystem extends SubsystemEG {
     {
         super(name);
         m_controllers = motors;
-        m_Range = (v) -> true;
+        m_Range = new Limitless();
         
         for (MotorController motor : m_controllers) {
             for (DistanceSensor sensor : motor.getEncoders()) {
@@ -88,7 +89,7 @@ public class MotorSubsystem extends SubsystemEG {
     }
 
     public boolean canMove() {
-        return m_Range.inRange(getDistance()) && m_subsystemSwitch.get();
+        return m_Range.inRange(getPosition()) && m_subsystemSwitch.get();
     }
 
     @Override
