@@ -1,14 +1,14 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2020.1.1"
+    id "edu.wpi.first.GradleRIO" version "2020.1.2"
     id "maven-publish"
 }
-
+ 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
 group='com.evergreen'
-version = "0.8.0"
+version = "0.8.3"
 
 publishing {
     repositories {
@@ -24,7 +24,7 @@ publishing {
     }
 }
 
-def ROBOT_MAIN_CLASS = "frc.robot.Main"
+def ROBOT_MAIN_CLASS = "com.evergreen.everlib.Main"
 
 repositories {
     maven {
