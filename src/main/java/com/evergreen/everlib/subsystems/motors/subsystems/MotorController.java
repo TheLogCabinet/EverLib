@@ -29,8 +29,6 @@ import com.evergreen.everlib.shuffleboard.loggables.LoggableObject;
  */
 public class MotorController implements SpeedController, LoggableObject {
 
-public class MotorController implements SpeedController {
-
     /**
      * MotorInitialize
      */
@@ -44,11 +42,6 @@ public class MotorController implements SpeedController {
     private final ArrayList<SpeedController> m_motors = new ArrayList<>();
     private final List<EncoderEG> m_encoders = new ArrayList<>();
     private final String m_name;
-    private final ArrayList<SpeedController> m_motors = new ArrayList<>();
-
-
-
-    private final List<EncoderEG> m_encoders = new ArrayList<>();
 
 
     /**
@@ -63,8 +56,6 @@ public class MotorController implements SpeedController {
     public MotorController(String name, ControllerType type, int... ports) {
         
         m_name = name;
-        SpeedController iterationMotor;
-
         SpeedController iterationMotor;
 
         //intializing them.
@@ -114,20 +105,7 @@ public class MotorController implements SpeedController {
         return m_encoders.get(0);
     }
 
-    /**
-     * @return A list of all encoders this motor uses.
-     */
-    public List<EncoderEG> getEncoders() {
-        return m_encoders;
-    }
 
-    /**
-     * Returns the encoder of the first encoder this controller uses. 
-     * Usefull if there is only one.
-     */
-    public EncoderEG getEncoder() {
-        return m_encoders.get(0);
-    }
 
     /**
      * Consrtucts a {@link MotorController} which combines multiple other MotorControllers.
