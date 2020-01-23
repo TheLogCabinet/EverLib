@@ -19,7 +19,7 @@ public class EncoderEG extends DistanceSensor {
     double m_lastPosition;
     double m_lastCalculation;
 
-    //TODO Try moving ensor tuning to RobotInit().
+    //TODO Try moving sensor tuning to RobotInit().
 
     private EncoderEG(Supplier<Integer> ticksSupplier,
      Consumer<Integer> ticksSetter, double distancePerPulse) {

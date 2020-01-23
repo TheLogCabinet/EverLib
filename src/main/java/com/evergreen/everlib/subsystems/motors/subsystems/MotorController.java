@@ -11,6 +11,14 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.SpeedController;
 
+import com.evergreen.everlib.Exceptions.SensorDoesNotExistException;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableBoolean;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableObject;
+
+
+
 
 
 /**
@@ -19,7 +27,7 @@ import edu.wpi.first.wpilibj.SpeedController;
  * 
  * @author Atai Ambus
  */
-public class MotorController implements SpeedController {
+public class MotorController implements SpeedController, LoggableObject {
 
     /**
      * MotorInitialize
@@ -32,9 +40,8 @@ public class MotorController implements SpeedController {
      * A list of all motors this objects controlls.
       */
     private final ArrayList<SpeedController> m_motors = new ArrayList<>();
-
-
     private final List<EncoderEG> m_encoders = new ArrayList<>();
+    private final String m_name;
 
 
     /**
@@ -46,12 +53,13 @@ public class MotorController implements SpeedController {
      * 
      * @param ports - The roborio ports the voltage controllers conect to.
      */
-    public MotorController(ControllerType type, int... ports) {
+    public MotorController(String name, ControllerType type, int... ports) {
         
+        m_name = name;
         SpeedController iterationMotor;
 
         //intializing them.
-        for(int i = 1; i < ports.length; i++)
+        for(int i = 0; i < ports.length; i++)
         {
             iterationMotor = type.initlize(ports[i]);
 
@@ -86,10 +94,17 @@ public class MotorController implements SpeedController {
     /**
      * Returns the encoder of the first encoder this controller uses. 
      * Usefull if there is only one.
+     * <p>
+     * If the controller has no encoders, a  {@link SensorDoesNotExistException} will be thrown
      */
     public EncoderEG getEncoder() {
+
+        if (m_encoders.isEmpty())
+            throw new SensorDoesNotExistException("Tried to get an encoder of \"" + getName() + "\","
+            + " but it has no encoders!");
         return m_encoders.get(0);
     }
+
 
     /**
      * Consrtucts a {@link MotorController} which combines multiple other MotorControllers.
@@ -99,8 +114,9 @@ public class MotorController implements SpeedController {
      * 
      * @param controllers - The controllers to combine.
      */
-    public MotorController(MotorController... controllers)
+    public MotorController(String name, MotorController... controllers)
     {
+        m_name = name;
         
         //Foreach of the motors, add its controller to the controller list.
         for(MotorController controller : controllers)
@@ -180,6 +196,30 @@ public class MotorController implements SpeedController {
         for (SpeedController controller : getMotors() ) {
             controller.stopMotor();
         }
+    }
+
+    @Override
+    public String getName() {
+        return m_name;
+    }
+
+    @Override
+    public List<LoggableData> getLoggableData() {
+        List<LoggableData> result = new ArrayList<>();
+
+        for (int i = 0; i < getMotors().size(); i++) {
+            result.add(new LoggableDouble("Motors/Values/#" + i, getMotors().get(i)::get));
+            result.add(new LoggableBoolean("Motors/Inverted/#" + i, getMotors().get(i)::getInverted));
+        }
+
+        for (int i = 0; i < getEncoders().size(); i++) {
+            result.add(new LoggableDouble("Encoders/Ticks/#" + i, getEncoders().get(i)::getTicks));
+            result.add(new LoggableDouble("Encoders/Distance/#" + i, getEncoders().get(i)::getPosition));
+            result.add(new LoggableDouble("Encoders/Speed/#" + i, getEncoders().get(i)::getSpeed));
+        }
+
+        return result;
+
     }
 
     /**A controller model - Victor SPX, Talon SRX, ect. */
