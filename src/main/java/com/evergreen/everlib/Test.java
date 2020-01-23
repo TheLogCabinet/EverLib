@@ -46,12 +46,10 @@ public class Test extends Tree {
 
     @Override
     protected void bindButtons() {
-        // TODO Auto-generated method stub
     }
 
     @Override
     protected void commandConfig() {
-        // TODO Auto-generated method stub
 
     }
 
@@ -68,25 +66,21 @@ public class Test extends Tree {
 
     @Override
     protected void whenEnabled() {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     protected void autoConfig() {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     protected void teleopConfig() {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     protected void test() {
-        // TODO Auto-generated method stub
     }
 
     @Override
