@@ -29,7 +29,7 @@ public class DistanceSensorGroup extends DistanceSensor implements LoggableObjec
                 m_sensors.remove(sensor);
                 continue;
             }
-
+            
             sum += sensor.getDistance();
         }
 
