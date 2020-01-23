@@ -32,7 +32,7 @@ public abstract class Constant {
         m_folder = DashboardConstants.getInstance().pwd();
 
         if (wasAdded()) {
-            throw new IllegalArgumentException(String.format(
+            System.out.println(String.format(
                 "Tried to add %s constant \"%s\" at %s, but a constant already"
                 + " exists in that path!", 
                 getType(), m_name, m_folder));

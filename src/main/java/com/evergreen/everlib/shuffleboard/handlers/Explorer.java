@@ -12,6 +12,7 @@ public class Explorer {
 
     public Explorer() {
         m_workingDirectory = "";
+        m_directoryStack = new Stack<>();
     }
 
     public Explorer(String path) {
@@ -19,7 +20,7 @@ public class Explorer {
         cd(path);
     }
 
-    public Explorer cd(String path) {
+    public void cd(String path) {
         if (path.startsWith("/")) {
             m_workingDirectory = "";
             path = path.substring(0, path.length());
@@ -36,8 +37,6 @@ public class Explorer {
                 m_workingDirectory += folder;
             }
         }
-
-        return new Explorer(m_workingDirectory);
     }
 
     public String pwd() {

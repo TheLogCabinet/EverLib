@@ -20,6 +20,7 @@ import com.evergreen.everlib.shuffleboard.loggables.LoggableBoolean;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableString;
+import com.evergreen.everlib.utils.ranges.Limitless;
 import com.evergreen.everlib.utils.ranges.Range;
 
 /**A {@link Command} which moves a {@link MotorSubsystem} according to a given speed map.
@@ -40,7 +41,7 @@ public class SetMotorSystem extends CommandEG {
 
   protected static double s_defaultModifier = 0.5;
   
-  private static final Range DEFAULT_RANGE = (v) -> true;
+  private static final Range DEFAULT_RANGE = new Limitless();
   private static final Supplier<Double> DEFAULT_MODIFIER = () -> 1.0;
 
   
@@ -55,7 +56,7 @@ public class SetMotorSystem extends CommandEG {
    * @param subsystem - The subsystem to move.
    * 
    * @param limit - The range for this movement - when it is out of the range, the command will end.
-   * This limit is tested against the subsystem's {@link SubsystemEG#getDistance() getDistance()} method. 
+   * This limit is tested against the subsystem's {@link SubsystemEG#getPosition() getDistance()} method. 
    * 
    * @param speedModifier - A modifier for the speeds given. Espically usefull when the main suppliers come,
    * for example, from joystick.
@@ -83,7 +84,7 @@ public class SetMotorSystem extends CommandEG {
    * @param subsystem - The subsystem to move.
    * 
    * @param limit - The range for this movement - when it is out of the range, the command will end.
-   * This limit is tested against the subsystem's {@link SubsystemEG#getDistance() getDistance()} method. 
+   * This limit is tested against the subsystem's {@link SubsystemEG#getPosition() getDistance()} method. 
    * 
    * @param speedModifier - A modifier for the speeds given. Espically usefull when the main suppliers come,
    * for example, from joystick.
@@ -106,7 +107,7 @@ public class SetMotorSystem extends CommandEG {
    * @param subsystem - The subsystem to move.
    * 
    * @param limit - The range for this movement - when it is out of the range, the command will end.
-   * This limit is tested against the subsystem's {@link SubsystemEG#getDistance() getDistance()} method. 
+   * This limit is tested against the subsystem's {@link SubsystemEG#getPosition() getDistance()} method. 
    * @param speedMap - A {@link Map} which {@link MotorController} indexes on the subsystem to speed
    * suppliers to set.
    *  
@@ -150,7 +151,7 @@ public class SetMotorSystem extends CommandEG {
   /**Finish if the subsystem goes out of its permitted range, or if the command times out. */
   @Override
   public boolean isFinished()  {
-    return !m_limit.inRange(m_subsystem.getDistance()) || !m_subsystem.canMove();
+    return !m_limit.inRange(m_subsystem.getPosition()) || !m_subsystem.canMove();
   }
 
   
@@ -172,9 +173,9 @@ public class SetMotorSystem extends CommandEG {
     loggables.addAll(List.of(new LoggableData[] 
     {
       new LoggableString(getName() + " - Subsystem", m_subsystem::getName),
-      new LoggableBoolean(getName() + " - In Range", () -> m_limit.inRange(m_subsystem.getDistance())),
+      new LoggableBoolean(getName() + " - In Range", () -> m_limit.inRange(m_subsystem.getPosition())),
       new LoggableDouble(getName() + " - Speed Modifier", m_speedModifier),
-      new LoggableDouble(getName() + " - Position", () -> m_subsystem.getDistance())
+      new LoggableDouble(getName() + " - Position", () -> m_subsystem.getPosition())
     }));
 
     loggables.addAll(getSpeedLoggables());

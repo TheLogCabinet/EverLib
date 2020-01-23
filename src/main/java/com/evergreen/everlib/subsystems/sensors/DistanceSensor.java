@@ -8,6 +8,7 @@
 package com.evergreen.everlib.subsystems.sensors;
 
 import com.evergreen.everlib.subsystems.SubsystemEG;
+import com.evergreen.everlib.utils.ranges.Limitless;
 import com.evergreen.everlib.utils.ranges.Range;
 
 /**
@@ -23,11 +24,11 @@ public abstract class DistanceSensor {
 
 
     public DistanceSensor() {
-        this( (v) -> true, 0);
+        this(new Limitless(), 0);
     }
 
     public DistanceSensor(double offset) {
-        this( (v) -> true, offset );
+        this(new Limitless(), offset );
     }
 
     public DistanceSensor(Range absoluteLimit) {

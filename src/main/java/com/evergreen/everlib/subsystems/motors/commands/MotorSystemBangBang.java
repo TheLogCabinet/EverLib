@@ -5,10 +5,12 @@ package com.evergreen.everlib.subsystems.motors.commands;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.evergreen.everlib.subsystems.motors.subsystems.MotorSubsystem;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableBoolean;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
+import com.evergreen.everlib.subsystems.motors.subsystems.MotorSubsystem;
+
+import edu.wpi.first.wpilibj2.command.Command;
 
 
 
@@ -25,7 +27,7 @@ public class MotorSystemBangBang extends MoveMotorSystem {
 
   private boolean m_startedInFront;
 
-  private final Supplier<Boolean> IN_FRONT_SUPPLIER = () -> m_subsystem.getDistance() > m_target.get();
+  private final Supplier<Boolean> IN_FRONT_SUPPLIER = () -> m_subsystem.getPosition() > m_target.get();
 
   /**
   * The constructor for this class, which sets its speed and target. 
@@ -63,7 +65,7 @@ public class MotorSystemBangBang extends MoveMotorSystem {
     
     loggables.addAll(List.of(
       new LoggableDouble(getName() + " - Target", m_target),
-      new LoggableDouble(getName() + " - distance from target", () -> m_target.get() - m_subsystem.getDistance()),
+      new LoggableDouble(getName() + " - distance from target", () -> m_target.get() - m_subsystem.getPosition()),
       new LoggableBoolean(getName() + " - In Front of Target", IN_FRONT_SUPPLIER)
     ));
     

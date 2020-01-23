@@ -22,11 +22,12 @@ public class PIDSettings {
     private final ConstantDouble m_F;
     /**Tolernace supplier */
     private final ConstantDouble m_tolerance;
-
+    /**Time between each calculation cycle */
     private final ConstantDouble m_period;
     /**The controller to write the information into.*/
     private final MotorSubsystem m_subsystem;
 
+    private final PIDType m_type;
 
     private final PIDController m_controller;
 
@@ -41,15 +42,15 @@ public class PIDSettings {
      * @param kP - The proportional constants.
      * @param kI - The integral constant
      * @param kD - The derivative constant.
-     * @param tolerance - the loop's tolerance; St what point away from the target should the loop
+     * @param tolerance - the loop's tolerance; At what point away from the target should the loop
      * be satisfied?
      * @param kF - The feed-forward constant.
      * @param period - The time between each controller update. 
     */
-    public PIDSettings(MotorSubsystem subsystem, double kP, double kI, double kD, 
+    public PIDSettings(MotorSubsystem subsystem, PIDType type, double kP, double kI, double kD, 
         double tolerance, double kF, double period) {
 
-        DashboardConstants.getInstance().cd("/" + subsystem.getName() + "/PID");
+        DashboardConstants.getInstance().pushd("/" + subsystem.getName() + "/PID");
 
         m_P = new ConstantDouble("kP", kP);
         m_I = new ConstantDouble("kI", kI);
@@ -66,6 +67,9 @@ public class PIDSettings {
         m_controller.setTolerance(tolerance);
 
         m_subsystem = subsystem;
+        m_type = type;
+
+        DashboardConstants.getInstance().popd();
     }
 
     /**
@@ -79,9 +83,9 @@ public class PIDSettings {
      * be satisfied?
      * @param kF - The feed-forward constant.
     */
-    public PIDSettings(MotorSubsystem subsystem, double kP, double kI, double kD, 
+    public PIDSettings(MotorSubsystem subsystem, PIDType type, double kP, double kI, double kD, 
         double tolerance, double kF) {
-            this(subsystem, kP, kI, kD, tolerance, kF, DEFAULT_PERIOD);
+            this(subsystem, type, kP, kI, kD, tolerance, kF, DEFAULT_PERIOD);
     }
 
 
@@ -95,9 +99,9 @@ public class PIDSettings {
      * @param tolerance - the loop's tolerance; St what point away from the target should the loop
      * be satisfied?
     */
-    public PIDSettings(MotorSubsystem subsystem, double kP, double kI, double kD, 
+    public PIDSettings(MotorSubsystem subsystem, PIDType type, double kP, double kI, double kD, 
         double tolerance) {
-            this(subsystem, kP, kI, kD, tolerance, DEFAULT_F, DEFAULT_PERIOD);
+            this(subsystem, type, kP, kI, kD, tolerance, DEFAULT_F, DEFAULT_PERIOD);
     }
 
     /**
@@ -109,8 +113,8 @@ public class PIDSettings {
      * @param kI - The integral constant
      * @param kD - The derivative constant.
     */
-    public PIDSettings(MotorSubsystem subsystem, double kP, double kI, double kD) {
-            this(subsystem, kP, kI, kD, DEFAULT_TOLEANCE, DEFAULT_F, DEFAULT_PERIOD);
+    public PIDSettings(MotorSubsystem subsystem, PIDType type, double kP, double kI, double kD) {
+            this(subsystem, type, kP, kI, kD, DEFAULT_TOLEANCE, DEFAULT_F, DEFAULT_PERIOD);
     }
 
 
@@ -135,7 +139,7 @@ public class PIDSettings {
     }
 
     public double getMeasurment() {
-        return m_subsystem.getDistance();
+        return m_type.mesureWith(m_subsystem);
     }
 
     public double getPeriod() {
@@ -152,5 +156,26 @@ public class PIDSettings {
 
     public SubsystemEG getSubsystem() {
         return m_subsystem;
+    }
+
+    @FunctionalInterface
+    private interface Mesurement {
+        public double mesure(MotorSubsystem subsystem);
+    }
+
+    public enum PIDType {
+        POSITION((system) -> system.getPosition()),
+        VELOCITY((system) -> system.getVelocity());/*,
+        ANGLE;*/
+
+        private Mesurement m_mesurement;
+
+        private PIDType(Mesurement mesurement) {
+            m_mesurement = mesurement;
+        }
+
+        public double mesureWith(MotorSubsystem system) {
+            return m_mesurement.mesure(system);
+        }
     }
 }

@@ -10,6 +10,7 @@ import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableObject;
 import com.evergreen.everlib.subsystems.sensors.DistanceSensor;
 import com.evergreen.everlib.subsystems.sensors.DistanceSensorGroup;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -21,10 +22,14 @@ public abstract class SubsystemEG extends SubsystemBase implements Exceptions, L
 
     protected ConstantBoolean m_subsystemSwitch;
     protected DistanceSensorGroup m_distanceSensor = new DistanceSensorGroup();
+    protected double m_lastPosition;
+    protected double m_lastCalcualtionTime;
+
 
     public SubsystemEG(String name) {
         setName(name);
         m_subsystemSwitch  = new ConstantBoolean(name);
+        
     }
 
     public SubsystemEG(String name, Command defaultCommand) {
@@ -51,14 +56,30 @@ public abstract class SubsystemEG extends SubsystemBase implements Exceptions, L
     }
 
 
-    public double getDistance() throws SensorDoesNotExistException {
-        if (m_distanceSensor.isEmpty())
-            return m_distanceSensor.getDistance();
-        else
-            throw new SensorDoesNotExistException(
-                "Tried to get the distance of " + getName() 
-                + ", but it does not have a distance sensor!");
+    public double getPosition() throws SensorDoesNotExistException {
+        if (!m_distanceSensor.isEmpty()) {
+            m_lastPosition = m_distanceSensor.getDistance();
+            m_lastCalcualtionTime = System.currentTimeMillis() / 1000;
+            return m_lastPosition;
+        }
 
+        throw new SensorDoesNotExistException(
+            "Tried to get the distance of " + getName() 
+            + ", but it does not have a distance sensor!");
+    }
+
+    public synchronized double getVelocity() throws SensorDoesNotExistException {
+        if (!m_distanceSensor.isEmpty()) {
+            double lastPos = m_lastPosition;
+            double lastPosTime = m_lastCalcualtionTime;
+            double now = System.currentTimeMillis() / 1000;
+            
+            return (getPosition() - lastPos) / (now - lastPosTime);
+        }
+
+        throw new SensorDoesNotExistException(
+            "Tried to get the velocity of " + getName() 
+            + ", but it does not have a distance sensor!");
     }
 
     @Override
@@ -70,7 +91,8 @@ public abstract class SubsystemEG extends SubsystemBase implements Exceptions, L
             loggables.addAll(sensorGroup.getLoggableData());
         }
 
-        loggables.add(new LoggableDouble(getName() + "/distance", () -> getDistance()));
+        loggables.add(new LoggableDouble(getName() + "/Position", this::getPosition));
+        loggables.add(new LoggableDouble(getName() + "/Velocity", this::getVelocity));
 
         return loggables;
     }

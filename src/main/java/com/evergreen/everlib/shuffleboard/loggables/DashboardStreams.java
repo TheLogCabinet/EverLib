@@ -18,7 +18,7 @@ public class DashboardStreams {
 
     public static void log(LoggableData loggable) {
         String name = loggable.getKey();
-        String key = m_explorer.pwd() + name;
+        String key = m_explorer.pwd() + "/" + name;
 
         if (!SmartDashboard.containsKey(key)) {
             loggable.setKey(key);
@@ -53,14 +53,14 @@ public class DashboardStreams {
 
     public static void addLoggable(LoggableObject loggable) {
 
-        DashboardStreams.cd(loggable.getName());
+        DashboardStreams.pushd(loggable.getName());
 
         for (LoggableData loggableData : loggable.getLoggableData()) 
         {
             log(loggableData);
         }
 
-        DashboardStreams.cd("..");
+        DashboardStreams.popd();;
     }
 
 
@@ -74,8 +74,16 @@ public class DashboardStreams {
         return m_explorer.pwd();
     }
     
-    public static Explorer cd(String path) {
-        return m_explorer.cd(path);
+    public static void cd(String path) {
+        m_explorer.cd(path);
+    }
+
+    public static void pushd(String path) {
+        m_explorer.pushd(path);
+    }
+
+    public static void popd() {
+        m_explorer.popd();
     }
 
 
