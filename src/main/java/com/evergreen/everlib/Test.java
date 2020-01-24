@@ -1,19 +1,14 @@
 package com.evergreen.everlib;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.evergreen.everlib.oi.joysticks.ExtremeProJoystick;
 import com.evergreen.everlib.shuffleboard.constants.ConstantBoolean;
 import com.evergreen.everlib.shuffleboard.constants.ConstantDouble;
 import com.evergreen.everlib.shuffleboard.constants.ConstantInt;
 import com.evergreen.everlib.shuffleboard.constants.ConstantString;
 import com.evergreen.everlib.shuffleboard.constants.DashboardConstants;
-import com.evergreen.everlib.shuffleboard.loggables.DashboardStreams;
 import com.evergreen.everlib.structure.Tree;
 import com.evergreen.everlib.subsystems.motors.subsystems.MotorController;
 import com.evergreen.everlib.subsystems.motors.subsystems.MotorController.ControllerType;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 
 /**
