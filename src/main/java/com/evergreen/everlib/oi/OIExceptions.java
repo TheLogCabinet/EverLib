@@ -10,7 +10,7 @@ package com.evergreen.everlib.oi;
 /**
  * The Class containing all custom OI exceptions used in Everlib. 
  */
-public class OIExceptions {
+public interface OIExceptions {
 
     public static class AxisDoesNotExistException extends RuntimeException
     {

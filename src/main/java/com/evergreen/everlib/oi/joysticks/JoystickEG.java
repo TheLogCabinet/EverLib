@@ -14,6 +14,7 @@ import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableObject;
 import com.evergreen.everlib.utils.Adjuster;
+import com.evergreen.everlib.utils.UselessAdjuster;
 
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -32,13 +33,7 @@ import edu.wpi.first.wpilibj.Joystick;
  * 
  * @author Atai Ambus
  */
-public class JoystickEG extends Joystick implements LoggableObject {
-
-    /** number of axes on the joystick */
-    private static final int AXES_NUM = 5;
-
-    /** if none were specified, the joystick's adjuster will be set to this */
-    private static final Adjuster<Double> DEFAULT_DEFAULT_ADJUSTER = (val) -> val;
+public class JoystickEG extends Joystick implements LoggableObject, OIExceptions {
 
     /** The joystick's name (for logging purposes) */
     private final String m_name;
