@@ -70,7 +70,7 @@ public class JoystickEG extends Joystick implements LoggableObject {
      * @param port - The joystick's port, as tuned in the Driver Station
      */
     public JoystickEG(String name, int port) {
-        this(name, port, DEFAULT_DEFAULT_ADJUSTER);
+        this(name, port, new UselessAdjuster<>());
     }
 
     /**
