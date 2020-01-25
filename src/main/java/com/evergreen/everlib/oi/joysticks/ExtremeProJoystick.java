@@ -93,7 +93,7 @@ public class ExtremeProJoystick extends JoystickEG {
          * If a middle button is requested in the top section, 
          * an exception will be thrown
          * @param section - The Z cycle (Top or bottom) the requested button is in.
-         * @return  - The position in a z cycle this section (forward, middle or back) starts.
+         * @return The position in a z cycle this section (forward, middle or back) starts.
          */
         public int getStart(Z section) {
 

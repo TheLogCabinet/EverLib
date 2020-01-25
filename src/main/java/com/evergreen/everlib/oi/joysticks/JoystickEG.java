@@ -89,45 +89,98 @@ public class JoystickEG extends Joystick implements LoggableObject {
 
     }
 
+    /**
+     * Sets an {@link Adjuster} for a joystick axis - now when getting its values,
+     * thhey will be first adjusted with this. 
+     * Usefull for fixing faulty joysticks, exponentiating or tampering with a specific input.
+     * 
+     * @param axis - The axis to set the adjuser of
+     * @param adjuster  - How to adjust the axis' values.
+     * @throws AxisDoesNotExistException if the axis rquested does not exist on the joystick
+     */
     public void setAxisAdjuster(Joystick.AxisType axis, Adjuster<Double> adjuster) {
+       try {
         m_adjusters[axis.value] = adjuster;
+       }
+
+       catch (IndexOutOfBoundsException e) {
+        throw new AxisDoesNotExistException(String.format(
+            "Tried to set the adjuster of the %s, axis on %s, but it does not have such axis!",
+            axis.name(), getName()),
+            e);
+       }
     }
 
+    /**
+     * Get the value of input axis, adjusted according to the joysticks' configuration.
+     * @param axis - the axis to get the value of 
+     * @return  the value of input axis, adjusted according to the joysticks' configuration.
+     * @throws AxisDoesNotExistException if the requested axis does not exist on tbhis joystick.
+     */
     @Override
-    public double getRawAxis(int axis) throws OIExceptions.AxisDoesNotExistException {
-        if (axis > AXES_NUM)
-            throw new OIExceptions.AxisDoesNotExistException();
+    public double getRawAxis(int axis) throws AxisDoesNotExistException {
+        try {
+            double value = super.getRawAxis(axis);
+    
+            value = m_adjusters[axis].adjust(value);
+    
+            if (m_exponential)
+                value *= Math.abs(value);
+            if (m_inverted)
+                value *= -1;
+    
+            return value;
 
-        double value = super.getRawAxis(axis);
+        } catch (IndexOutOfBoundsException e) {
+            throw new AxisDoesNotExistException(String.format(
+                "Tried to set the get the value of %s, at axis %s, but it does not have such axis!",
+                getName(), AxisType.values()[axis].name()),
+                e);
+        }
 
-        value = m_adjusters[axis].adjust(value);
-
-        if (m_exponential)
-            value *= Math.abs(value);
-        if (m_inverted)
-            value *= -1;
-
-        return value;
     }
 
-    public double getRawAxis(Joystick.AxisType axis) throws OIExceptions.AxisDoesNotExistException {
+    
+    /**
+     * Get the value of input axis, adjusted according to the joysticks' configuration.
+     * @param axis - the axis to get the value of 
+     * @return  the value of input axis, adjusted according to the joysticks' configuration.
+     * @throws AxisDoesNotExistException if the requested axis does not exist on tbhis joystick.
+     */
+    public double getRawAxis(Joystick.AxisType axis) throws AxisDoesNotExistException {
         return getRawAxis(axis.value);
     }
 
+    /**
+     * Sets the default adjuster for this joystick - if no adjuster is specified for a 
+     * requested axis, this will be used.
+     * 
+     * @param adjuster - the adjuster to set as default.
+     */
     public void setDefaultAdjuster(Adjuster<Double> adjuster) {
         m_defaultAdjuster = adjuster;
     }
 
+    /**
+     * Sets the joystick exponential - values will be multiplied by their own,
+     * absolute value, making a curved function as you move the joystick, rather than a
+     * linear one. 
+     */
     public void setExponential() {
         m_exponential = true;
     }
 
+    /**
+     * Sets the joystick inverted - its values will be multiplied by -1.
+     */
     public void setInverted() {
         m_inverted = true;
     }
 
+    /**Set all the joystic adjusters  */
     public void kill() {
         m_defaultAdjuster = (v) -> 0.0;
+        Arrays.fill(m_adjusters, m_defaultAdjuster);
     }
 
     @Override
