@@ -53,7 +53,7 @@ public class JoystickEG extends Joystick implements LoggableObject, OIExceptions
      * An array of the adjusters for each axis.
      */
     @SuppressWarnings("unchecked")
-    private Adjuster<Double>[] m_adjusters = (Adjuster<Double>[]) new Adjuster[AXES_NUM];
+    private Adjuster<Double>[] m_adjusters = (Adjuster<Double>[]) new Adjuster[getAxisCount()];
 
     /**The default adjuster - applied if no adjuster was specified for an axis*/
     private Adjuster<Double> m_defaultAdjuster;
