@@ -3,6 +3,7 @@ package com.evergreen.everlib;
 import java.util.List;
 
 import com.evergreen.everlib.shuffleboard.constants.ConstantBoolean;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableBoolean;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableInt;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableObject;
@@ -32,7 +33,7 @@ public abstract class CommandEG extends CommandBase implements LoggableObject {
      */
     public CommandEG(String name) {
         setName(name);
-        m_commandSwitch = new ConstantBoolean(name + "/switch");
+        m_commandSwitch = new ConstantBoolean(name + "/Switch");
     }
 
     
@@ -51,7 +52,7 @@ public abstract class CommandEG extends CommandBase implements LoggableObject {
             addRequirements((Subsystem)subsystem);
         }
 
-        m_commandSwitch = new ConstantBoolean(subsystems[0].getName() + "/command switches/" + name);
+        m_commandSwitch = new ConstantBoolean(subsystems[0].getName() + "/Command Switches/" + name);
     }
 
     /**Schedules this command, defaulting to interruptible, as long both this an*/
