@@ -9,9 +9,14 @@ public class MaxLimit implements Range {
 
     private Supplier<Double> m_maxLimit, m_tolerance;
 
-    public MaxLimit(double maxLimit) {
-        m_maxLimit = () -> maxLimit;
+    public MaxLimit(double limit) {
+        m_maxLimit = () -> limit;
         m_tolerance = () -> 0.0;
+    }
+
+    public MaxLimit(double limit, double tolerance) {
+        m_maxLimit = () -> limit;
+        m_tolerance = () -> tolerance;
     }
 
     public MaxLimit(Supplier<Double> limit) {
