@@ -114,7 +114,8 @@ public abstract class CommandEG extends CommandBase implements LoggableObject {
     @Override
     public List<LoggableData> getLoggableData() {
         return List.of(new LoggableData[] {
-            new LoggableInt(getName() + "/Ran Counter", () -> m_ranCounter)
+            new LoggableInt("Ran Counter", () -> m_ranCounter),
+            new LoggableBoolean("Can Start", this::canStart)
         });
     }
 
