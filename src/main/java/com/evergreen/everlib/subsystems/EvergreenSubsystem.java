@@ -8,7 +8,7 @@ import com.evergreen.everlib.shuffleboard.constants.ConstantBoolean;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableObject;
-import com.evergreen.everlib.subsystems.sensors.AngleSensorGroup;
+import com.evergreen.everlib.subsystems.sensors.EvergreenGyro;
 import com.evergreen.everlib.subsystems.sensors.DistanceSensor;
 import com.evergreen.everlib.subsystems.sensors.DistanceSensorGroup;
 
@@ -26,8 +26,8 @@ public abstract class EvergreenSubsystem extends SubsystemBase implements Except
     protected DistanceSensorGroup m_distanceSensor = 
         new DistanceSensorGroup(getName() + "/Distance Sensor");
 
-    protected AngleSensorGroup m_angleSensors = 
-        new AngleSensorGroup(getName() + "/Angle Sensor");
+    protected EvergreenGyro m_angleSensors = 
+        new EvergreenGyro(getName() + "/Angle Sensor");
         
     protected EvergreenCommand m_currentlyUsedBy;
 

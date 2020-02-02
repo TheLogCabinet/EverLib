@@ -11,12 +11,13 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 /**
  * AngleSensorGroup
  */
-public class AngleSensorGroup implements Gyro, LoggableObject {
+public class EvergreenGyro implements Gyro, LoggableObject {
     private List<Gyro> m_sensors = new ArrayList<>();
     private String m_name;
 
-    public AngleSensorGroup(String name) {
+    public EvergreenGyro(String name, Gyro... angleSensors) {
         m_name = name;
+        m_sensors.addAll(List.of(angleSensors));
     }
 
     public void addSensor(Gyro angleSensor) {
