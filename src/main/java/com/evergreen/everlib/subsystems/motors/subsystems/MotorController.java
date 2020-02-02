@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.evergreen.everlib.subsystems.sensors.EncoderEG;
+import com.evergreen.everlib.subsystems.sensors.EvergreenEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -40,7 +40,7 @@ public class MotorController implements SpeedController, LoggableObject {
      * A list of all motors this objects controlls.
       */
     private final ArrayList<SpeedController> m_motors = new ArrayList<>();
-    private final List<EncoderEG> m_encoders = new ArrayList<>();
+    private final List<EvergreenEncoder> m_encoders = new ArrayList<>();
     private final String m_name;
 
 
@@ -65,14 +65,17 @@ public class MotorController implements SpeedController, LoggableObject {
 
             if (type == ControllerType.SPARKMAX_BRUSHED || 
                 type == ControllerType.SPARKMAX_BRUSHLESS) {
-                    m_encoders.add(new EncoderEG(
+                    m_encoders.add(new EvergreenEncoder( 
+                        getName() + "/Encoder #" + i,
                         //Casting the motor to sparkmax to get its encoder
                         ((CANSparkMax)iterationMotor) 
-                        .getEncoder()));
-                }
+                            .getEncoder()));
+            }
                 
             else if (type == ControllerType.TALON_SRX) {
-                m_encoders.add(new EncoderEG((WPI_TalonSRX)iterationMotor));
+                m_encoders.add(new EvergreenEncoder(
+                    getName() + "/Encoder #" + i,
+                    (WPI_TalonSRX)iterationMotor));
             }
 
             m_motors.add(iterationMotor);
@@ -87,7 +90,7 @@ public class MotorController implements SpeedController, LoggableObject {
     /**
      * @return A list of all encoders this motor uses.
      */
-    public List<EncoderEG> getEncoders() {
+    public List<EvergreenEncoder> getEncoders() {
         return m_encoders;
     }
 
@@ -97,7 +100,7 @@ public class MotorController implements SpeedController, LoggableObject {
      * <p>
      * If the controller has no encoders, a  {@link SensorDoesNotExistException} will be thrown
      */
-    public EncoderEG getEncoder() {
+    public EvergreenEncoder getEncoder() {
 
         if (m_encoders.isEmpty())
             throw new SensorDoesNotExistException("Tried to get an encoder of \"" + getName() + "\","
@@ -215,7 +218,7 @@ public class MotorController implements SpeedController, LoggableObject {
         for (int i = 0; i < getEncoders().size(); i++) {
             result.add(new LoggableDouble("Encoders/Ticks/#" + i, getEncoders().get(i)::getTicks));
             result.add(new LoggableDouble("Encoders/Distance/#" + i, getEncoders().get(i)::getPosition));
-            result.add(new LoggableDouble("Encoders/Speed/#" + i, getEncoders().get(i)::getSpeed));
+            result.add(new LoggableDouble("Encoders/Speed/#" + i, getEncoders().get(i)::getVelocity));
         }
 
         return result;
