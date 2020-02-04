@@ -5,18 +5,22 @@ import java.util.Stack;
 /**
  * Explorer
  */
-public class Explorer {
+public class Explorer implements LoggableObject {
 
     private String m_workingDirectory;
-    private Stack<String> m_directoryStack;
+    private String m_name;
+    private Stack<String> 
+        m_directoryStack,
+        m_history;
 
-    public Explorer() {
+    public Explorer(String name) {
+        m_name = name;
         m_workingDirectory = "";
         m_directoryStack = new Stack<>();
-    }
+        m_history = new Stack<>();
 
-    public Explorer(String path) {
-        this();
+        m_history.push("/");
+
         cd(path);
     }
 
@@ -50,5 +54,33 @@ public class Explorer {
 
     public void popd() {
         cd(m_directoryStack.pop());
+    }
+
+    @Override
+    public String getName() {
+        return m_name;
+    }
+
+    @Override
+    public List<LoggableData> getLoggableData() {
+        return List.of(
+            new LoggableString("Working Directoty", this::pwd),
+            new LoggableString("Directory Stack Top", this::peekd),
+            new LoggableString("History", m_history::peek)
+        );
+    }
+
+    public String peekd() {
+        try {
+            return m_directoryStack.peek();
+        }
+
+        catch (EmptyStackException e) {
+            return "<Empty>";
+        }
+    }
+
+    public void popHistory() {
+        m_history.pop();
     }
 }
