@@ -92,7 +92,9 @@ public abstract class Constant {
 
     
     public abstract void addToDashboard();
-    
+    protected abstract void addToDashboard(Object value);
+
+
     public void reset() {
         addToDashboard();
     }
