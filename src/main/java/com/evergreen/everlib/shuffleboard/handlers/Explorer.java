@@ -1,6 +1,15 @@
 package com.evergreen.everlib.shuffleboard.handlers;
 
+import java.util.EmptyStackException;
+import java.util.List;
 import java.util.Stack;
+
+import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableObject;
+import com.evergreen.everlib.shuffleboard.loggables.LoggableString;
+import com.evergreen.everlib.structure.Tree;
+
+import edu.wpi.first.wpilibj.Joystick;
 
 /**
  * Explorer
@@ -20,27 +29,32 @@ public class Explorer implements LoggableObject {
         m_history = new Stack<>();
 
         m_history.push("/");
-
-        cd(path);
     }
 
     public void cd(String path) {
         if (path.startsWith("/")) {
             m_workingDirectory = "";
-            path = path.substring(0, path.length());
+            path = path.substring(1, path.length());
         }
 
         for (String folder : path.split("/")) {
-            if (folder == "..") {
-                m_workingDirectory = m_workingDirectory.substring(
-                    0, m_workingDirectory.lastIndexOf('/'));
+
+            if (folder.equals("..")) {
+                m_workingDirectory = 
+                    m_workingDirectory.substring(0, m_workingDirectory.lastIndexOf('/'));
             }
 
-            else if (folder != ".") {
-                m_workingDirectory += "/";
+            else if (!folder.equals(".")) {
+                
+                if (!m_workingDirectory.equals("")) {
+                    m_workingDirectory += "/";
+                }
+
                 m_workingDirectory += folder;
             }
         }
+
+        m_history.push(pwd());
     }
 
     public String pwd() {
@@ -49,7 +63,7 @@ public class Explorer implements LoggableObject {
 
     public void pushd(String path) {
         m_directoryStack.push(pwd());
-        cd(path); 
+        cd(path);
     }
 
     public void popd() {
