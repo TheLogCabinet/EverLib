@@ -46,53 +46,51 @@ public class Test extends Tree {
 
     @Override
     protected void bindButtons() {
-        // TODO Auto-generated method stub
+        
     }
 
     @Override
     protected void commandConfig() {
-        // TODO Auto-generated method stub
+        
 
     }
 
     @Override
     protected void log() {
-        // DashboardStreams.addLoggable(m_motorLeft);
-        // DashboardStreams.addLoggable(m_motorRight);
-        // DashboardStreams.addDouble(
-        //     "Chassis Left Encoder", 
-        //     () -> (double)((WPI_TalonSRX)m_motorLeft.getMotors().get(0)).getSelectedSensorPosition());
-        DashboardStreams.addDouble(
+        DashboardStreams.getInstance().addLoggable(m_motorLeft);
+        DashboardStreams.getInstance().addLoggable(m_motorRight);
+        DashboardStreams.getInstance().addDouble(
+            "Chassis Left Encoder", 
+            () -> (double)((WPI_TalonSRX)m_motorLeft.getMotors().get(0)).getSelectedSensorPosition());
+        DashboardStreams.getInstance().addDouble(
             "Talon Encoder", () -> m_leftA.getSelectedSensorPosition() * 1.0);
     }
 
     @Override
     protected void whenEnabled() {
-        // TODO Auto-generated method stub
+        
 
     }
 
     @Override
     protected void autoConfig() {
-        // TODO Auto-generated method stub
+        
 
     }
 
     @Override
     protected void teleopConfig() {
-        // TODO Auto-generated method stub
+        
 
     }
 
     @Override
     protected void test() {
-        // TODO Auto-generated method stub
+        
     }
 
     @Override
     public void testPeriodic() {
-        // m_motorLeft.set(m_jsLeft.getY());
-        // m_motorRight.set(m_jsRight.getY());
         
         m_leftA.set(m_jsLeft.getY());
         m_leftB.set(m_jsLeft.getY());
