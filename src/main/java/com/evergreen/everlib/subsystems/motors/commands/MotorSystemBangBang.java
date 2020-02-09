@@ -5,10 +5,12 @@ package com.evergreen.everlib.subsystems.motors.commands;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.evergreen.everlib.subsystems.motors.subsystems.MotorSubsystem;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableBoolean;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableData;
 import com.evergreen.everlib.shuffleboard.loggables.LoggableDouble;
+import com.evergreen.everlib.subsystems.motors.subsystems.MotorSubsystem;
+
+import edu.wpi.first.wpilibj2.command.Command;
 
 
 

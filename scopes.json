@@ -22,6 +22,10 @@
     "utils":
     {
         "ranges": "Range Classes"
-    }
+    },
+
+    "base": "Base Frmework (CommandEG)",
+
+    "test": "Test & Main classes" 
 
 }

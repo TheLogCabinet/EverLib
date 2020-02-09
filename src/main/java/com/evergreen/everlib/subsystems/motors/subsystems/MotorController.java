@@ -106,7 +106,6 @@ public class MotorController implements SpeedController, LoggableObject {
     }
 
 
-
     /**
      * Consrtucts a {@link MotorController} which combines multiple other MotorControllers.
      * Also works as a copy constructor. <p>
