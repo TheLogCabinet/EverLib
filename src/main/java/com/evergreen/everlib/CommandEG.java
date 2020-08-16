@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
  * @author Atai Ambus
  */
 public abstract class CommandEG extends CommandBase implements LoggableObject {
+    
     private ConstantBoolean m_commandSwitch;
 
     private int m_ranCounter = 0;

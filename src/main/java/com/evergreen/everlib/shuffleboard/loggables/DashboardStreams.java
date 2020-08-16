@@ -79,6 +79,4 @@ public class DashboardStreams extends Explorer {
             loggableData.addToDashboard();
         }
     }
-
-
 }

@@ -58,5 +58,4 @@ public class ConstantBoolean extends Constant implements Supplier<Boolean> {
     protected void addToDashboard(Object value) {
         Preferences.getInstance().putBoolean(getPath(), (boolean)value);
     }
-
 }
